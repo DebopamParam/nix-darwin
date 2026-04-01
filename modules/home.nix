@@ -2,6 +2,8 @@
 
 {
   home.stateVersion = "24.11";
+  home.username = "debopamchowdhury";
+  home.homeDirectory = "/Users/debopamchowdhury";
 
   # ── User Packages ─────────────────────────────────────────────
 
