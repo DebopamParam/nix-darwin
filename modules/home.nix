@@ -37,6 +37,8 @@
 
       # Nix rebuild
       rebuild = "sudo darwin-rebuild switch --flake ~/.config/nix-darwin";
+
+      start-venv = "source .venv/bin/activate";
     };
 
     # initExtra renamed to initContent in newer home-manager
@@ -52,6 +54,23 @@
 
       # fzf keybindings
       source <(fzf --zsh)
+
+      # microsandbox
+      export PATH="$HOME/.local/bin:$PATH"
+
+      # Tunnel helper
+      tunnel-port() { ngrok http --domain=nonreducibly-unretrograded-danna.ngrok-free.dev "$1"; }
+
+      # llmctx — generate context.md from current directory
+      llmctx() {
+        local out="context.md"
+        echo -e "# File Tree\n\`\`\`\n$(find . -type f ! -name "$out" ! -path "./.git/*" | sort)\n\`\`\`\n" > "$out"
+        find . -type f ! -name "$out" ! -path "./.git/*" | sort | while read -r file; do
+          file "$file" | grep -qv "text" && continue
+          echo -e "## \`$file\`\n\`\`\`\n$(cat "$file")\n\`\`\`\n" >> "$out"
+        done
+        echo "Done! $out created with $(wc -l < "$out") lines"
+      }
     '';
   };
 
