@@ -1,0 +1,125 @@
+{ pkgs, username, ... }:
+
+{
+  # ── CLI Tools (from nixpkgs) ──────────────────────────────────
+  # Only add tools here that you want system-wide for all users.
+  # Dev-specific tools you already know — add/remove as you see fit.
+
+  environment.systemPackages = with pkgs; [
+    # Core utilities
+    git
+    gh
+    curl
+    wget
+    ripgrep
+    fd
+    bat
+    eza
+    fzf
+    jq
+    yq
+    tree
+    htop
+    tldr
+    zoxide
+    starship
+    direnv
+    tmux
+
+    # Git TUI & better diffs
+    lazygit
+    delta
+
+    # Nix tooling
+    nixfmt-rfc-style
+
+    # GNU replacements (macOS ships BSD variants)
+    coreutils
+    gnused
+    gawk
+
+    # Misc
+    ffmpeg
+    imagemagick
+    mas           # Mac App Store CLI — needed for masApps
+  ];
+
+  # ── Nix Settings ──────────────────────────────────────────────
+
+  nix = {
+    settings.experimental-features = "nix-command flakes";
+    gc = {
+      automatic = true;
+      interval = { Weekday = 0; Hour = 2; Minute = 0; };
+      options = "--delete-older-than 30d";
+    };
+  };
+
+  nixpkgs.config.allowUnfree = true;
+
+  # ── Shell ─────────────────────────────────────────────────────
+
+  programs.zsh.enable = true;
+
+  # Touch ID for sudo
+  security.pam.services.sudo_local.touchIdAuth = true;
+
+  # ── macOS System Settings ─────────────────────────────────────
+  # These are applied on every `darwin-rebuild switch`.
+  # Equivalent to changing things in System Settings, but declarative.
+
+  system.defaults = {
+
+    dock = {
+      autohide = true;
+      autohide-delay = 0.0;
+      autohide-time-modifier = 0.4;
+      orientation = "bottom";
+      tilesize = 48;
+      show-recents = false;
+      mru-spaces = false;
+      minimize-to-application = true;
+      persistent-apps = [];           # Start empty — pin apps manually later
+    };
+
+    finder = {
+      AppleShowAllExtensions = true;
+      ShowPathbar = true;
+      ShowStatusBar = true;
+      FXPreferredViewStyle = "clmv";  # Column view (like the video creator!)
+      FXDefaultSearchScope = "SCcf";  # Search current folder
+      _FXShowPosixPathInTitle = true;
+    };
+
+    NSGlobalDomain = {
+      AppleShowAllExtensions = true;
+      AppleInterfaceStyle = "Dark";
+      NSAutomaticCapitalizationEnabled = false;
+      NSAutomaticSpellingCorrectionEnabled = false;
+      NSAutomaticPeriodSubstitutionEnabled = false;
+      InitialKeyRepeat = 15;          # Fast key repeat
+      KeyRepeat = 2;                  # Fastest repeat rate
+      "com.apple.swipescrolldirection" = true;
+    };
+
+    trackpad = {
+      Clicking = true;                # Tap to click
+      TrackpadRightClick = true;
+      TrackpadThreeFingerDrag = true;
+    };
+
+    loginwindow.GuestEnabled = false;
+
+    screencapture = {
+      location = "~/Pictures/Screenshots";
+      type = "png";
+    };
+
+    menuExtraClock.Show24Hour = true;
+  };
+
+  # ── System Metadata ───────────────────────────────────────────
+
+  system.stateVersion = 6;
+  nixpkgs.hostPlatform = "aarch64-darwin";
+}
