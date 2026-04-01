@@ -36,7 +36,7 @@
       lg    = "lazygit";
 
       # Nix rebuild
-      rebuild = "darwin-rebuild switch --flake ~/.config/nix-darwin";
+      rebuild = "sudo darwin-rebuild switch --flake ~/.config/nix-darwin";
     };
 
     # initExtra renamed to initContent in newer home-manager
