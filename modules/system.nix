@@ -31,7 +31,7 @@
     delta
 
     # Nix tooling
-    nixfmt-rfc-style
+    nixfmt
 
     # GNU replacements (macOS ships BSD variants)
     coreutils
