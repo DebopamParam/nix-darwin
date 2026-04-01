@@ -38,6 +38,8 @@
       "jordanbaird-ice"         # Hide menu bar clutter (free, open source)
       "stats"                   # System monitor in menu bar
 
+      "visual-studio-code"
+
       # ── Notch ──
       # "notchnook"               # Turn the notch into a utility hub
       # Alternative (free): install BoringNotch manually or via:
