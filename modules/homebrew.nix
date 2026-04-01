@@ -41,6 +41,8 @@
 
       "visual-studio-code"
 
+      "ngrok"
+
       # ── Notch ──
       # "notchnook"               # Turn the notch into a utility hub
       # Alternative (free): install BoringNotch manually or via:
