@@ -118,6 +118,13 @@
     menuExtraClock.Show24Hour = true;
   };
 
+  # ── User Account ───────────────────────────────────────────────
+
+  users.users.debopamchowdhury = {
+    name = "debopamchowdhury";
+    home = "/Users/debopamchowdhury";
+  };
+
   # ── System Metadata ───────────────────────────────────────────
 
   system.stateVersion = 6;
