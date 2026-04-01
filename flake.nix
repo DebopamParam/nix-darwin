@@ -14,11 +14,13 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    # Spotlight indexing for Nix-installed .app files
-    mac-app-util = {
-      url = "github:hraban/mac-app-util";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    # mac-app-util: Spotlight indexing for Nix .app files
+    # TEMPORARILY DISABLED — SBCL/fare-quasiquote build failure on nixpkgs-unstable
+    # Uncomment when upstream is fixed:
+    # mac-app-util = {
+    #   url = "github:hraban/mac-app-util";
+    #   inputs.nixpkgs.follows = "nixpkgs";
+    # };
 
     # Declarative Homebrew management
     nix-homebrew.url = "github:zhaofengli/nix-homebrew";
@@ -43,7 +45,6 @@
     nixpkgs,
     nix-darwin,
     home-manager,
-    mac-app-util,
     nix-homebrew,
     homebrew-core,
     homebrew-cask,
@@ -67,8 +68,8 @@
         ./modules/system.nix
         ./modules/homebrew.nix
 
-        # ── mac-app-util: makes Nix apps visible in Spotlight ──
-        mac-app-util.darwinModules.default
+        # ── mac-app-util: TEMPORARILY DISABLED ──
+        # mac-app-util.darwinModules.default
 
         # ── nix-homebrew: takes over your existing Homebrew ──
         nix-homebrew.darwinModules.nix-homebrew

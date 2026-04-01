@@ -35,11 +35,12 @@
       gd    = "git diff";
       lg    = "lazygit";
 
-      # Nix rebuild — the command you'll run constantly
+      # Nix rebuild
       rebuild = "darwin-rebuild switch --flake ~/.config/nix-darwin";
     };
 
-    initExtra = ''
+    # initExtra renamed to initContent in newer home-manager
+    initContent = ''
       # Starship prompt
       eval "$(starship init zsh)"
 
@@ -55,28 +56,25 @@
   };
 
   # ── Git ───────────────────────────────────────────────────────
+  # Options have been renamed in newer home-manager:
+  #   userName/userEmail → settings.user.name/email
+  #   extraConfig        → settings
+  #   delta.*            → programs.delta.*
 
   programs.git = {
     enable = true;
     userName = "DebopamChowdhury";             # ← EDIT: your full name
     userEmail = "debopamwork@gmail.com";    # ← EDIT: your email
 
-    delta = {
-      enable = true;
-      options = {
-        navigate = true;
-        side-by-side = true;
-        line-numbers = true;
-      };
-    };
-
     extraConfig = {
       init.defaultBranch = "main";
       push.autoSetupRemote = true;
       pull.rebase = true;
       rerere.enabled = true;
-      core.editor = "code --wait";    # Change to "nvim" if you prefer
+      core.editor = "code --wait";
     };
+
+    signing.format = null;  # Silence the signing format warning
 
     ignores = [
       ".DS_Store"
@@ -87,6 +85,17 @@
       ".idea"
       ".vscode"
     ];
+  };
+
+  # Delta (git diff pager) — now a separate program in home-manager
+  programs.delta = {
+    enable = true;
+    enableGitIntegration = true;
+    options = {
+      navigate = true;
+      side-by-side = true;
+      line-numbers = true;
+    };
   };
 
   # ── Starship Prompt ───────────────────────────────────────────
