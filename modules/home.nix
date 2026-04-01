@@ -63,10 +63,10 @@
 
   programs.git = {
     enable = true;
-    userName = "DebopamChowdhury";             # ← EDIT: your full name
-    userEmail = "debopamwork@gmail.com";    # ← EDIT: your email
 
     extraConfig = {
+      user.name = "DebopamChowdhury";
+      user.email = "debopamwork@gmail.com";
       init.defaultBranch = "main";
       push.autoSetupRemote = true;
       pull.rebase = true;

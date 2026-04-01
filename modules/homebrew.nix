@@ -25,6 +25,7 @@
       # ── Browsers ──
       "arc"
       "firefox"
+      "linearmouse"
 
       # ── Productivity / Launchers ──
       "raycast"                 # Spotlight replacement — try native Spotlight first if you want
