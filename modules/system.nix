@@ -31,7 +31,7 @@
     delta
 
     # Nix tooling
-    nixfmt
+    nixfmt-rfc-style
 
     # GNU replacements (macOS ships BSD variants)
     coreutils
@@ -45,15 +45,10 @@
   ];
 
   # ── Nix Settings ──────────────────────────────────────────────
+  # Determinate Systems installer manages the Nix daemon,
+  # so we disable nix-darwin's Nix management.
 
-  nix = {
-    settings.experimental-features = "nix-command flakes";
-    gc = {
-      automatic = true;
-      interval = { Weekday = 0; Hour = 2; Minute = 0; };
-      options = "--delete-older-than 30d";
-    };
-  };
+  nix.enable = false;
 
   nixpkgs.config.allowUnfree = true;
 
