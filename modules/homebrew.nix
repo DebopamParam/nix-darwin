@@ -51,13 +51,10 @@
       "the-unarchiver"          # RAR, 7z, etc.
       "appcleaner"              # Clean uninstall apps
       "monitorcontrol"          # External display brightness via keyboard
-      "karabiner-elements"      # Deep keyboard customization
 
       # ── Communication ──
       "slack"
       "discord"
-      "zoom"
-      "telegram"
 
       # ── Media ──
       "iina"                    # Best video player for Mac
