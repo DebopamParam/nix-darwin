@@ -41,7 +41,7 @@
       # ── Notch ──
       # "notchnook"               # Turn the notch into a utility hub
       # Alternative (free): install BoringNotch manually or via:
-      "theBoredTeam/boring-notch/boring-notch"
+      "TheBoredTeam/boring-notch/boring-notch"
 
       # ── Terminals ──
       "ghostty"
