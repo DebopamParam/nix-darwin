@@ -35,13 +35,12 @@
       "rectangle"               # Keyboard-driven window snapping
 
       # ── Menu Bar ──
-      "ice"                     # Hide menu bar clutter (free, open source)
+      "jordanbaird-ice"         # Hide menu bar clutter (free, open source)
       "stats"                   # System monitor in menu bar
 
       # ── Notch ──
       # "notchnook"               # Turn the notch into a utility hub
       # Alternative (free): install BoringNotch manually or via:
-      "TheBoredTeam/boring-notch/boring-notch"
 
       # ── Terminals ──
       "ghostty"
