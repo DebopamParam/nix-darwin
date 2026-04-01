@@ -57,6 +57,10 @@
 
   nixpkgs.config.allowUnfree = true;
 
+  # ── Primary User (required by recent nix-darwin) ───────────────
+
+  system.primaryUser = "debopamchowdhury";
+
   # ── Shell ─────────────────────────────────────────────────────
 
   programs.zsh.enable = true;
