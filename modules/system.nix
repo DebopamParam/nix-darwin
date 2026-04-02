@@ -96,8 +96,8 @@
       NSAutomaticCapitalizationEnabled = false;
       NSAutomaticSpellingCorrectionEnabled = false;
       NSAutomaticPeriodSubstitutionEnabled = false;
-      InitialKeyRepeat = 15;          # Fast key repeat
-      KeyRepeat = 2;                  # Fastest repeat rate
+      InitialKeyRepeat = 25;          # Fast key repeat
+      KeyRepeat = 4;                  # Fastest repeat rate
       "com.apple.swipescrolldirection" = true;
     };
 
