@@ -39,6 +39,9 @@
       rebuild = "sudo darwin-rebuild switch --flake ~/.config/nix-darwin";
 
       start-venv = "source .venv/bin/activate";
+
+      # SSH host picker (fzf-powered)
+      sshp = "ssh-pick";
     };
 
     # initExtra renamed to initContent in newer home-manager
@@ -71,14 +74,26 @@
         done
         echo "Done! $out created with $(wc -l < "$out") lines"
       }
+
+      # SSH host picker — parses ~/.ssh/config and fuzzy-selects a host
+      ssh-pick() {
+        local host
+        host=$(
+          grep -E "^Host " ~/.ssh/config 2>/dev/null \
+            | grep -v '[*?]' \
+            | awk '{print $2}' \
+            | fzf --prompt="SSH › " \
+                  --height=40% \
+                  --border=rounded \
+                  --preview='ssh -G {} 2>/dev/null | grep -E "^(hostname|user|port|identityfile) " | column -t' \
+                  --preview-window=right:50%
+        )
+        [[ -n "$host" ]] && ssh "$host"
+      }
     '';
   };
 
   # ── Git ───────────────────────────────────────────────────────
-  # Options have been renamed in newer home-manager:
-  #   userName/userEmail → settings.user.name/email
-  #   extraConfig        → settings
-  #   delta.*            → programs.delta.*
 
   programs.git = {
     enable = true;
@@ -127,7 +142,11 @@
         success_symbol = "[➜](bold green)";
         error_symbol = "[✗](bold red)";
       };
-      directory.truncation_length = 3;
+      directory = {
+        truncation_length = 0;     # Show full path, never truncate
+        truncate_to_repo  = false; # Don't collapse inside git repos either
+        home_symbol       = "~";   # Keep ~ prefix for home subtree
+      };
       git_branch.symbol = " ";
       nix_shell = {
         disabled = false;
