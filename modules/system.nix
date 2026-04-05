@@ -15,6 +15,8 @@
     fd
     bat
     eza
+    python313
+    uv
     fzf
     jq
     yq
