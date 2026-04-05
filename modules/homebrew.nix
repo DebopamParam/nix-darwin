@@ -51,6 +51,9 @@
       "ghostty"
       "warp"
 
+      # -- mongodb --
+      "mongodb-compass"
+
       # ── Utilities ──
       "the-unarchiver"          # RAR, 7z, etc.
       "appcleaner"              # Clean uninstall apps
