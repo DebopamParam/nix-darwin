@@ -38,6 +38,8 @@
       # Nix rebuild
       rebuild = "sudo darwin-rebuild switch --flake ~/.config/nix-darwin";
 
+      llmctx = "bash ~/.config/nix-darwin/scripts/repo2md.sh";
+
       start-venv = "source .venv/bin/activate";
 
       # SSH host picker (fzf-powered)

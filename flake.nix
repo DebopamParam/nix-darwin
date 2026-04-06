@@ -97,7 +97,7 @@
           home-manager = {
             useGlobalPkgs = true;
             useUserPackages = true;
-            backupFileExtension = "backup";
+            # backupFileExtension = "backup";
             extraSpecialArgs = { inherit inputs; };
             users.${username} = import ./modules/home.nix;
           };
