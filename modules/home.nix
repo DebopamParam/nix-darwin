@@ -67,11 +67,140 @@
       # llmctx — generate context.md from current directory
       llmctx() {
         local out="context.md"
-        echo -e "# File Tree\n\`\`\`\n$(find . -type f ! -name "$out" ! -path "./.git/*" | sort)\n\`\`\`\n" > "$out"
-        find . -type f ! -name "$out" ! -path "./.git/*" | sort | while read -r file; do
-          file "$file" | grep -qv "text" && continue
-          echo -e "## \`$file\`\n\`\`\`\n$(cat "$file")\n\`\`\`\n" >> "$out"
+
+        local -a prune_dirs=(
+          "./.git"
+          "./.hg"
+          "./.svn"
+          "./.jj"
+          "./.direnv"
+          "./.devenv"
+          "./.env"
+          "./.venv"
+          "./venv"
+          "./env"
+          "./node_modules"
+          "./vendor"
+          "./dist"
+          "./build"
+          "./target"
+          "./out"
+          "./coverage"
+          "./.coverage"
+          "./htmlcov"
+          "./.next"
+          "./.nuxt"
+          "./.svelte-kit"
+          "./.turbo"
+          "./.parcel-cache"
+          "./.cache"
+          "./.pytest_cache"
+          "./.mypy_cache"
+          "./.ruff_cache"
+          "./.tox"
+          "./.nox"
+          "./__pycache__"
+          "./.idea"
+          "./.vscode"
+          "./.docker"
+        )
+
+        local -a skip_files=(
+          "$out"
+          ".DS_Store"
+          "*.pyc"
+          "*.pyo"
+          "*.pyd"
+          "*.so"
+          "*.dylib"
+          "*.dll"
+          "*.o"
+          "*.a"
+          "*.class"
+          "*.jar"
+          "*.war"
+          "*.min.js"
+          "*.min.css"
+          "*.map"
+          "*.log"
+          "*.pid"
+          "*.lock"
+          "*.sqlite"
+          "*.sqlite3"
+          "*.db"
+          "*.tmp"
+          "*.temp"
+          "*.swp"
+          "*.swo"
+          "*.zip"
+          "*.tar"
+          "*.gz"
+          "*.tgz"
+          "*.bz2"
+          "*.xz"
+          "*.7z"
+          "*.rar"
+          "*.pdf"
+          "*.png"
+          "*.jpg"
+          "*.jpeg"
+          "*.gif"
+          "*.webp"
+          "*.svg"
+          "*.mp3"
+          "*.wav"
+          "*.mp4"
+          "*.mov"
+          "*.avi"
+          "*.mkv"
+          "*.iso"
+          ".env"
+          ".env.*"
+          "docker-compose.override.yml"
+        )
+
+        local -a find_prune_expr=()
+        local dir
+        for dir in "''${prune_dirs[@]}"; do
+          find_prune_expr+=( -path "$dir" -o )
         done
+        unset 'find_prune_expr[-1]'
+
+        local -a find_skip_file_expr=()
+        local pattern
+        for pattern in "''${skip_files[@]}"; do
+          find_skip_file_expr+=( -name "$pattern" -o )
+        done
+        unset 'find_skip_file_expr[-1]'
+
+        {
+          echo "# File Tree"
+          echo '```'
+          find . \
+            \( "''${find_prune_expr[@]}" \) -prune -o \
+            -type f \
+            ! \( "''${find_skip_file_expr[@]}" \) \
+            -print | sort
+          echo '```'
+          echo
+        } > "$out"
+
+        find . \
+          \( "''${find_prune_expr[@]}" \) -prune -o \
+          -type f \
+          ! \( "''${find_skip_file_expr[@]}" \) \
+          -print0 | sort -z | while IFS= read -r -d '''' file; do
+            file --mime "$file" | grep -Eq 'charset=binary' && continue
+
+            {
+              echo "## \`$file\`"
+              echo '```'
+              cat "$file"
+              echo '```'
+              echo
+            } >> "$out"
+          done
+
         echo "Done! $out created with $(wc -l < "$out") lines"
       }
 
