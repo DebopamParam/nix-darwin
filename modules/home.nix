@@ -106,34 +106,39 @@
       sshp = "ssh-pick";
     };
 
-    initContent = ''
+    initContent = lib.mkMerge [
+      (lib.mkOrder 550 ''
+        fpath+=/opt/homebrew/share/zsh/site-functions
+      '')
+      ''
 
-      # microsandbox
-      export PATH="$HOME/.local/bin:$PATH"
+        # microsandbox
+        export PATH="$HOME/.local/bin:$PATH"
 
-      # Tunnel helper
-      tunnel-port() { ngrok http --domain=nonreducibly-unretrograded-danna.ngrok-free.dev "$1"; }
+        # Tunnel helper
+        tunnel-port() { ngrok http --domain=nonreducibly-unretrograded-danna.ngrok-free.dev "$1"; }
 
-      # SSH host picker — parses ~/.ssh/config and fuzzy-selects a host
-      ssh-pick() {
-        local host
-        host=$(
-          grep -E "^Host " ~/.ssh/config 2>/dev/null \
-            | grep -v '[*?]' \
-            | awk '{print $2}' \
-            | fzf --prompt="SSH › " \
-                  --height=40% \
-                  --border=rounded \
-                  --preview='ssh -G {} 2>/dev/null | grep -E "^(hostname|user|port|identityfile) " | column -t' \
-                  --preview-window=right:50%
-        )
-        [[ -n "$host" ]] && ssh "$host"
-      }
+        # SSH host picker — parses ~/.ssh/config and fuzzy-selects a host
+        ssh-pick() {
+          local host
+          host=$(
+            grep -E "^Host " ~/.ssh/config 2>/dev/null \
+              | grep -v '[*?]' \
+              | awk '{print $2}' \
+              | fzf --prompt="SSH › " \
+                    --height=40% \
+                    --border=rounded \
+                    --preview='ssh -G {} 2>/dev/null | grep -E "^(hostname|user|port|identityfile) " | column -t' \
+                    --preview-window=right:50%
+          )
+          [[ -n "$host" ]] && ssh "$host"
+        }
 
-      # Claude Code profiles — source the shared script so host shell
-      # behaves identically to dev containers
-      source $HOME/.config/claude-profiles/init.sh
-    '';
+        # Claude Code profiles — source the shared script so host shell
+        # behaves identically to dev containers
+        source $HOME/.config/claude-profiles/init.sh
+      ''
+    ];
   };
 
   programs.zoxide = {
