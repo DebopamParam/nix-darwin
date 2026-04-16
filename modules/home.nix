@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, lib, ... }:
 
 {
   home.stateVersion = "24.11";
@@ -10,6 +10,88 @@
   home.packages = with pkgs; [
     # Add user-specific packages here if needed
   ];
+
+  # ── Claude Code Profiles ──────────────────────────────────────
+
+  # Shared config — plugins, settings, CLAUDE.md live here once.
+  # Auth + session state stay isolated inside each profile dir.
+  home.file.".claude-shared/settings.json" = {
+    text = builtins.toJSON {
+      # Shared preferences applied to both profiles.
+      # Add keys here as needed — Claude Code merges this with per-profile overrides.
+    };
+  };
+
+  home.activation.claudeProfiles = lib.hm.dag.entryAfter ["writeBoundary"] ''
+    # Shared dir — plugins and global config
+    mkdir -p $HOME/.claude-shared/plugins
+
+    # Per-profile dirs — auth + session history, never shared
+    mkdir -p $HOME/.claude-personal
+    mkdir -p $HOME/.claude-work
+
+    # Symlink shared assets into each profile.
+    # -s = symbolic  -f = overwrite if exists  -n = don't descend into dir target
+    # Installing a plugin with either alias updates ~/.claude-shared/plugins/
+    # and is immediately visible in both profiles.
+    for profile in personal work; do
+      ln -sfn $HOME/.claude-shared/plugins   $HOME/.claude-$profile/plugins
+      ln -sfn $HOME/.claude-shared/settings.json $HOME/.claude-$profile/settings.json
+
+      # CLAUDE.md — only symlink if the shared one exists, so Claude Code can
+      # create it fresh on first run if you haven't written one yet.
+      if [ -f $HOME/.claude-shared/CLAUDE.md ]; then
+        ln -sfn $HOME/.claude-shared/CLAUDE.md $HOME/.claude-$profile/CLAUDE.md
+      fi
+    done
+  '';
+
+  # Shared init script — sourced on host shell AND auto-injected into
+  # every dev container via /etc/profile.d/ (see devcontainer-defaults below)
+  home.file.".config/claude-profiles/init.sh" = {
+    executable = true;
+    text = ''
+      # Claude Code profile switcher
+      # ~ is intentionally evaluated at shell-startup time inside the container,
+      # so it resolves correctly whether the container user is root, vscode, etc.
+      _CLAUDE_BASE="$(eval echo ~)"
+      alias claude-personal="CLAUDE_CONFIG_DIR=''${_CLAUDE_BASE}/.claude-personal command claude"
+      alias claude-work="CLAUDE_CONFIG_DIR=''${_CLAUDE_BASE}/.claude-work command claude"
+
+      # Block bare `claude` — a function shadows the binary and can't be bypassed
+      claude() {
+        echo "❌  Don't use 'claude' directly. Use:" >&2
+        echo "     claude-work      → work account" >&2
+        echo "     claude-personal  → personal account" >&2
+        return 1
+      }
+
+      unset _CLAUDE_BASE
+    '';
+  };
+
+  # Global devcontainer defaults — VS Code merges this into EVERY container,
+  # including repos you clone that have their own devcontainer.json.
+  #
+  # Key design choices:
+  #   - Mounts both profile dirs from the host (live, bind-mounted — auth tokens
+  #     are shared, so you never re-authenticate inside a container)
+  #   - Mounts init.sh into /etc/profile.d/ so it self-activates on every new
+  #     shell without needing a postCreateCommand (avoids conflicts with repos
+  #     that define their own postCreateCommand)
+  home.file.".config/containers/devcontainer-defaults.json" = {
+    text = builtins.toJSON {
+      mounts = [
+        "source=\${localEnv:HOME}/.claude-personal,target=/root/.claude-personal,type=bind,consistency=cached"
+        "source=\${localEnv:HOME}/.claude-work,target=/root/.claude-work,type=bind,consistency=cached"
+        # Shared config — plugins installed in either profile are visible in both.
+        # The per-profile dirs already symlink into this via the activation script,
+        # but we also mount it directly so the container can write new plugins here.
+        "source=\${localEnv:HOME}/.claude-shared,target=/root/.claude-shared,type=bind,consistency=cached"
+        "source=\${localEnv:HOME}/.config/claude-profiles/init.sh,target=/etc/profile.d/claude-profiles.sh,type=bind,readonly"
+      ];
+    };
+  };
 
   # ── Zsh ───────────────────────────────────────────────────────
 
@@ -42,11 +124,12 @@
 
       start-venv = "source .venv/bin/activate";
 
+      check-updates = "nix flake update --flake ~/.config/nix-darwin && sudo darwin-rebuild build --flake ~/.config/nix-darwin && nix store diff-closures /nix/var/nix/profiles/system ~/.config/nix-darwin/result";
+
       # SSH host picker (fzf-powered)
       sshp = "ssh-pick";
     };
 
-    # initExtra renamed to initContent in newer home-manager
     initContent = ''
       # Starship prompt
       eval "$(starship init zsh)"
@@ -81,6 +164,10 @@
         )
         [[ -n "$host" ]] && ssh "$host"
       }
+
+      # Claude Code profiles — source the shared script so host shell
+      # behaves identically to dev containers
+      source $HOME/.config/claude-profiles/init.sh
     '';
   };
 
@@ -148,7 +235,7 @@
 
   # ── Tmux ─────────────────────────────────────
 
-programs.tmux = {
+  programs.tmux = {
     enable = true;
     mouse = true;
     keyMode = "vi";
@@ -184,6 +271,7 @@ programs.tmux = {
       bind-key -r M-Right resize-pane -R 5
     '';
   };
+
   # ── Bat (cat replacement) ─────────────────────────────────────
 
   programs.bat = {

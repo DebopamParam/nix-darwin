@@ -27,6 +27,8 @@
       "firefox"
       "linearmouse"
 
+      "claude-code"
+
       "orbstack"
 
       # ── Productivity / Launchers ──
