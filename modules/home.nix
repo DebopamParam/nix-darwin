@@ -105,7 +105,7 @@
       # SSH host picker (fzf-powered)
       sshp = "ssh-pick";
 
-      tmux-pick = "tmux ls | fzf --prompt=\"Session › \" | cut -d: -f1 | xargs tmux attach -t";
+      tmux-pick = "tmux attach -t $(tmux ls | fzf --prompt=\"Session › \" | cut -d: -f1)";
 
     };
 
