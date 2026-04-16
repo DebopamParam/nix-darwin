@@ -37,8 +37,6 @@
     done
   '';
 
-  # Shared init script — sourced on host shell AND auto-injected into
-  # every dev container via /etc/profile.d/ (see devcontainer-defaults below)
   home.file.".config/claude-profiles/init.sh" = {
     executable = true;
     text = ''
@@ -59,31 +57,6 @@
 
       unset _CLAUDE_BASE
     '';
-  };
-
-  # Global devcontainer defaults — VS Code merges this into EVERY container,
-  # including repos you clone that have their own devcontainer.json.
-  #
-  # Key design choices:
-  #   - Mounts both profile dirs from the host (live, bind-mounted — auth tokens
-  #     are shared, so you never re-authenticate inside a container)
-  #   - Mounts init.sh into /etc/profile.d/ so it self-activates on every new
-  #     shell without needing a postCreateCommand (avoids conflicts with repos
-  #     that define their own postCreateCommand)
-  home.file.".config/containers/devcontainer-defaults.json" = {
-    text = builtins.toJSON {
-      mounts = [
-        "source=\${localEnv:HOME}/.claude-personal,target=/root/.claude-personal,type=bind,consistency=cached"
-        "source=\${localEnv:HOME}/.claude-work,target=/root/.claude-work,type=bind,consistency=cached"
-        # Shared config — plugins installed in either profile are visible in both.
-        # The per-profile dirs already symlink into this via the activation script,
-        # but we also mount it directly so the container can write new plugins here.
-        "source=\${localEnv:HOME}/.claude-shared,target=/root/.claude-shared,type=bind,consistency=cached"
-        "source=\${localEnv:HOME}/.config/claude-profiles/init.sh,target=/etc/profile.d/claude-profiles.sh,type=bind,readonly"
-        "source=\${localEnv:HOME}/.zshrc,target=/root/.zshrc,type=bind,readonly"
-        "source=\${localEnv:HOME}/.config/starship.toml,target=/root/.config/starship.toml,type=bind,readonly"
-      ];
-    };
   };
 
   # ── Zsh ───────────────────────────────────────────────────────
