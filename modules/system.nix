@@ -83,6 +83,7 @@
     };
 
     finder = {
+      AppleShowAllFiles = true;
       ShowPathbar = true;
       ShowStatusBar = true;
       FXPreferredViewStyle = "clmv";  # Column view (like the video creator!)
