@@ -28,6 +28,8 @@
     direnv
     tmux
 
+    nodejs
+
     # Git TUI & better diffs
     lazygit
     delta

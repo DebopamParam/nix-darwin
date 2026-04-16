@@ -12,27 +12,21 @@
   ];
 
   home.activation.claudeProfiles = lib.hm.dag.entryAfter ["writeBoundary"] ''
-    # Shared dir — plugins and global config
-    mkdir -p $HOME/.claude-shared/plugins
+    # ~/.claude is the shared dir — Claude Code's default config location
+    mkdir -p $HOME/.claude/plugins
 
     # Per-profile dirs — auth + session history, never shared
     mkdir -p $HOME/.claude-personal
     mkdir -p $HOME/.claude-work
 
-    # Symlink shared assets into each profile.
-    # -s = symbolic  -f = overwrite if exists  -n = don't descend into dir target
-    # Installing a plugin with either alias updates ~/.claude-shared/plugins/
-    # and is immediately visible in both profiles.
+    # Symlink shared assets into each profile
     for profile in personal work; do
-      ln -sfn $HOME/.claude-shared/plugins   $HOME/.claude-$profile/plugins
-      if [ -f $HOME/.claude-shared/settings.json ]; then
-        ln -sfn $HOME/.claude-shared/settings.json $HOME/.claude-$profile/settings.json
+      ln -sfn $HOME/.claude/plugins       $HOME/.claude-$profile/plugins
+      if [ -f $HOME/.claude/settings.json ]; then
+        ln -sfn $HOME/.claude/settings.json $HOME/.claude-$profile/settings.json
       fi
-
-      # CLAUDE.md — only symlink if the shared one exists, so Claude Code can
-      # create it fresh on first run if you haven't written one yet.
-      if [ -f $HOME/.claude-shared/CLAUDE.md ]; then
-        ln -sfn $HOME/.claude-shared/CLAUDE.md $HOME/.claude-$profile/CLAUDE.md
+      if [ -f $HOME/.claude/CLAUDE.md ]; then
+        ln -sfn $HOME/.claude/CLAUDE.md     $HOME/.claude-$profile/CLAUDE.md
       fi
     done
   '';
@@ -92,6 +86,10 @@
 
       # Nix rebuild
       rebuild = "sudo darwin-rebuild switch --flake ~/.config/nix-darwin";
+
+      # Claude config sync
+      sync-claude  = "bash ~/.config/nix-darwin/scripts/sync-claude-config.sh";
+      apply-claude = "bash ~/.config/nix-darwin/scripts/sync-claude-config.sh --apply";
 
       llmctx = "bash ~/.config/nix-darwin/scripts/repo2md.sh";
 
