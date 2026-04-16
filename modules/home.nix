@@ -122,7 +122,10 @@
 
       start-venv = "source .venv/bin/activate";
 
-      check-updates = "nix flake update --flake ~/.config/nix-darwin && sudo darwin-rebuild build --flake ~/.config/nix-darwin && nix store diff-closures /nix/var/nix/profiles/system ~/.config/nix-darwin/result";
+      my-nix-clean = "sudo nix-collect-garbage --delete-older-than 15d";
+
+      # In shellAliases:
+      my-nix-update = "bash ~/.config/nix-darwin/scripts/update-select.sh";
 
       # SSH host picker (fzf-powered)
       sshp = "ssh-pick";
