@@ -9,13 +9,20 @@ BLUE='\033[1;34m'  GREEN='\033[1;32m'  DIM='\033[2m'  RESET='\033[0m'
 items=()
 
 echo -e "${BLUE}Checking Homebrew...${RESET}"
+
+# Refresh tap metadata so brew sees the latest upstream versions.
+# nix-homebrew pins taps via flake.lock, so without this step
+# `brew outdated` compares against stale cask definitions.
+echo -e "${DIM}  Refreshing tap metadata...${RESET}"
+brew update --quiet 2>/dev/null || true
+
 while IFS= read -r line; do
   [[ -z "$line" ]] && continue
   pkg=$(echo "$line" | awk '{print $1}')
   cur=$(echo "$line" | awk -F'[()]' '{print $2}' | awk '{print $1}')
   new=$(echo "$line" | awk '{print $NF}')
   items+=("[brew]  $pkg  ($cur → $new)")
-done < <(brew outdated --verbose 2>/dev/null || true)
+done < <(brew outdated --greedy --verbose 2>/dev/null || true)
 
 echo -e "${BLUE}Checking Mac App Store...${RESET}"
 while IFS= read -r line; do
