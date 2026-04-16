@@ -104,6 +104,9 @@
 
       # SSH host picker (fzf-powered)
       sshp = "ssh-pick";
+
+      tmux-pick = "tmux ls | fzf --prompt=\"Session › \" | cut -d: -f1 | xargs tmux attach -t";
+
     };
 
     initContent = lib.mkMerge [
