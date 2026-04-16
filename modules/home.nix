@@ -80,6 +80,8 @@
         # but we also mount it directly so the container can write new plugins here.
         "source=\${localEnv:HOME}/.claude-shared,target=/root/.claude-shared,type=bind,consistency=cached"
         "source=\${localEnv:HOME}/.config/claude-profiles/init.sh,target=/etc/profile.d/claude-profiles.sh,type=bind,readonly"
+        "source=\${localEnv:HOME}/.zshrc,target=/root/.zshrc,type=bind,readonly"
+        "source=\${localEnv:HOME}/.config/starship.toml,target=/root/.config/starship.toml,type=bind,readonly"
       ];
     };
   };
