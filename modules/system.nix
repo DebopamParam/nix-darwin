@@ -80,11 +80,9 @@
       show-recents = false;
       mru-spaces = false;
       minimize-to-application = true;
-      persistent-apps = [];           # Start empty — pin apps manually later
     };
 
     finder = {
-      AppleShowAllExtensions = true;
       ShowPathbar = true;
       ShowStatusBar = true;
       FXPreferredViewStyle = "clmv";  # Column view (like the video creator!)

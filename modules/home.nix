@@ -11,17 +11,6 @@
     # Add user-specific packages here if needed
   ];
 
-  # ── Claude Code Profiles ──────────────────────────────────────
-
-  # Shared config — plugins, settings, CLAUDE.md live here once.
-  # Auth + session state stay isolated inside each profile dir.
-  home.file.".claude-shared/settings.json" = {
-    text = builtins.toJSON {
-      # Shared preferences applied to both profiles.
-      # Add keys here as needed — Claude Code merges this with per-profile overrides.
-    };
-  };
-
   home.activation.claudeProfiles = lib.hm.dag.entryAfter ["writeBoundary"] ''
     # Shared dir — plugins and global config
     mkdir -p $HOME/.claude-shared/plugins
@@ -36,7 +25,9 @@
     # and is immediately visible in both profiles.
     for profile in personal work; do
       ln -sfn $HOME/.claude-shared/plugins   $HOME/.claude-$profile/plugins
-      ln -sfn $HOME/.claude-shared/settings.json $HOME/.claude-$profile/settings.json
+      if [ -f $HOME/.claude-shared/settings.json ]; then
+        ln -sfn $HOME/.claude-shared/settings.json $HOME/.claude-$profile/settings.json
+      fi
 
       # CLAUDE.md — only symlink if the shared one exists, so Claude Code can
       # create it fresh on first run if you haven't written one yet.
@@ -100,6 +91,13 @@
     autosuggestion.enable = true;
     syntaxHighlighting.enable = true;
 
+    plugins = [
+      {
+        name = "fzf-tab";
+        src = "${pkgs.zsh-fzf-tab}/share/fzf-tab";
+      }
+    ];
+
     shellAliases = {
       ".."  = "cd ..";
       "..." = "cd ../..";
@@ -131,17 +129,6 @@
     };
 
     initContent = ''
-      # Starship prompt
-      eval "$(starship init zsh)"
-
-      # Zoxide (smarter cd)
-      eval "$(zoxide init zsh)"
-
-      # direnv
-      eval "$(direnv hook zsh)"
-
-      # fzf keybindings
-      source <(fzf --zsh)
 
       # microsandbox
       export PATH="$HOME/.local/bin:$PATH"
@@ -169,6 +156,16 @@
       # behaves identically to dev containers
       source $HOME/.config/claude-profiles/init.sh
     '';
+  };
+
+  programs.zoxide = {
+    enable = true;
+    enableZshIntegration = true;
+  };
+
+  programs.carapace = {
+    enable = true;
+    enableZshIntegration = true;
   };
 
   # ── Git ───────────────────────────────────────────────────────
