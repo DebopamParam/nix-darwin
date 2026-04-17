@@ -5,7 +5,7 @@
     enable = true;
 
     onActivation = {
-      autoUpdate = false;       # Don't slow down every rebuild
+      autoUpdate = true;       # Don't slow down every rebuild
       upgrade = false;
       # ⚠️  START WITH "none" — this prevents nuking your existing brew packages
       #     on the first run. Once you've added everything you need to this
@@ -27,7 +27,7 @@
       "firefox"
       "linearmouse"
 
-      "claude-code"
+      "claude-code@latest"
 
       "orbstack"
 
