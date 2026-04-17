@@ -95,7 +95,7 @@
 
       start-venv = "source .venv/bin/activate";
 
-      my-nix-clean = "sudo nix-collect-garbage --delete-older-than 15d";
+      my-machine-clean = "bash ~/.config/nix-darwin/scripts/machine-clean.sh";
 
       # In shellAliases:
       my-nix-update = "bash ~/.config/nix-darwin/scripts/update-select.sh";
