@@ -29,6 +29,8 @@
 
       "claude-code@latest"
 
+      "brave-browser"
+
       "orbstack"
 
       # ── Productivity / Launchers ──
