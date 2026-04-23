@@ -80,6 +80,16 @@ else
   echo -e "${DIM}[npm] Not found — skipping.${RESET}"
 fi
 
+# ── 4.5 Playwright cache ─────────────────────────────────────────
+sep
+PLAYWRIGHT_CACHE="$HOME/Library/Caches/ms-playwright"
+if [[ -d "$PLAYWRIGHT_CACHE" ]]; then
+  size=$(du -sh "$PLAYWRIGHT_CACHE" 2>/dev/null | awk '{print $1}')
+  echo -e "${BLUE}[playwright] Removing browser cache (${size})...${RESET}"
+  rm -rf "$PLAYWRIGHT_CACHE"
+  echo -e "${GREEN}[playwright] Done.${RESET}"
+fi
+
 # ── 5. uv / pip cache ────────────────────────────────────────────
 sep
 if command -v uv > /dev/null 2>&1; then
