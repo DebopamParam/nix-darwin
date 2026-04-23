@@ -10,8 +10,14 @@ sep() { echo -e "\n${DIM}──────────────────�
 
 # ── 1. Nix garbage collection ────────────────────────────────────
 sep
-echo -e "${BLUE}[nix] Collecting garbage older than 15 days...${RESET}"
-sudo nix-collect-garbage --delete-older-than 15d
+if [[ "${1:-}" == "--deep" ]]; then
+  echo -e "${BLUE}[nix] Aggressive cleanup! Removing ALL unpinned garbage...${RESET}"
+  nix-collect-garbage -d
+  sudo nix-collect-garbage -d
+else
+  echo -e "${BLUE}[nix] Collecting garbage older than 15 days...${RESET}"
+  sudo nix-collect-garbage --delete-older-than 15d
+fi
 echo -e "${GREEN}[nix] Done.${RESET}"
 
 # ── 2. Homebrew ──────────────────────────────────────────────────
