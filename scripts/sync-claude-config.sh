@@ -15,18 +15,20 @@ APPLY=false
 
 # ── File pairs ───────────────────────────────────────────────────
 declare -a LIVE=(
-  "$HOME/.claude/settings.json"
+  "$HOME/.claude-personal/settings.json"
+  "$HOME/.claude-work/settings.json"
   "$HOME/.config/claude-profiles/statusline.sh"
   "$HOME/.claude/plugins/installed_plugins.json"
 )
 declare -a REPO_FILES=(
+  "$REPO_CLAUDE/settings.json"
   "$REPO_CLAUDE/settings.json"
   "$REPO_CLAUDE/statusline.sh"
   "$REPO_CLAUDE/plugins/installed_plugins.json"
 )
 
 if $APPLY; then
-  SRCS=("${REPO_FILES[@]}")∆
+  SRCS=("${REPO_FILES[@]}")
   DSTS=("${LIVE[@]}")
   DIRECTION="nix-darwin → Claude dirs"
 else
