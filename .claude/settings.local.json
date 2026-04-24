@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(rtk ls *)",
+      "Bash(rtk read *)",
+      "Bash(chmod +x /tmp/migrate-claude-sessions.sh /tmp/rollback-claude-sessions.sh)",
+      "Bash(bash -n /tmp/migrate-claude-sessions.sh)",
+      "Bash(bash -n /tmp/rollback-claude-sessions.sh)",
+      "Bash(nix-instantiate --parse /Users/debopamchowdhury/.config/nix-darwin/modules/home.nix)"
+    ]
+  }
+}
