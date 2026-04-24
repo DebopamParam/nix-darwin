@@ -17,6 +17,7 @@
 
     brews = [
       # CLI tools better installed via brew than nix (if any)
+      "rtk"
     ];
 
     # ── GUI Applications (Homebrew Casks) ───────────────────────
