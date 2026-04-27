@@ -25,19 +25,6 @@
     # Declarative Homebrew management
     nix-homebrew.url = "github:zhaofengli/nix-homebrew";
 
-    # Pinned Homebrew taps
-    homebrew-core = {
-      url = "github:homebrew/homebrew-core";
-      flake = false;
-    };
-    homebrew-cask = {
-      url = "github:homebrew/homebrew-cask";
-      flake = false;
-    };
-    homebrew-bundle = {
-      url = "github:homebrew/homebrew-bundle";
-      flake = false;
-    };
   };
 
   outputs = inputs@{
@@ -46,9 +33,6 @@
     nix-darwin,
     home-manager,
     nix-homebrew,
-    homebrew-core,
-    homebrew-cask,
-    homebrew-bundle,
     ...
   }: let
     # ═══════════════════════════════════════════
@@ -82,12 +66,6 @@
             # *** IMPORTANT: migrates your existing Homebrew install ***
             autoMigrate = true;
 
-            taps = {
-              "homebrew/homebrew-core"   = homebrew-core;
-              "homebrew/homebrew-cask"   = homebrew-cask;
-              "homebrew/homebrew-bundle" = homebrew-bundle;
-            };
-            mutableTaps = false;
           };
         }
 
