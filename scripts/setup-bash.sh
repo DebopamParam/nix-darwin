@@ -16,6 +16,7 @@ GIT_NAME="DebopamChowdhury"
 GIT_EMAIL="debopamwork@gmail.com"
 DRY_RUN=false
 YES=false
+SELECTED_KEYS=()
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -513,7 +514,7 @@ main() {
     run_selector
   fi
 
-  if [[ ${#SELECTED_KEYS[@]+"${#SELECTED_KEYS[@]}"} -eq 0 ]]; then
+  if [[ ${#SELECTED_KEYS[@]} -eq 0 ]]; then
     warn "Nothing selected, exiting."
     exit 0
   fi
