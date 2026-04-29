@@ -56,7 +56,6 @@
 
       # ── Terminals ──
       "ghostty"
-      "warp"
 
       # -- mongodb --
       "mongodb-compass"
