@@ -206,7 +206,13 @@ set -g window-status-current-style "bold,fg=colour166"
 
 bind r source-file ~/.tmux.conf \; display "Reloaded!"
 EOF
-  ok "tmux installed and configured"
+
+if tmux has-session 2>/dev/null; then
+  tmux source-file "$HOME/.tmux.conf"
+  ok "tmux config reloaded"
+fi
+
+ok "tmux installed and configured"
 }
 
 install_git_config() {
