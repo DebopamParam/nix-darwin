@@ -9,7 +9,11 @@
       "Bash(nix-instantiate --parse /Users/debopamchowdhury/.config/nix-darwin/modules/home.nix)",
       "Bash(rtk wc *)",
       "WebSearch",
-      "WebFetch(domain:github.com)"
+      "WebFetch(domain:github.com)",
+      "Bash(brew list *)",
+      "Bash(rtk git *)",
+      "Bash(mdfind -name \"Firefox.app\")",
+      "Bash(echo \"---exit: $?---\")"
     ]
   }
 }

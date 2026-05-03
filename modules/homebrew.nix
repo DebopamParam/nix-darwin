@@ -10,7 +10,7 @@
       # ⚠️  START WITH "none" — this prevents nuking your existing brew packages
       #     on the first run. Once you've added everything you need to this
       #     config, change to "zap" for full declarative control.
-      cleanup = "none";
+      cleanup = "zap";
     };
 
     taps = [];
@@ -25,7 +25,6 @@
     casks = [
       # ── Browsers ──
       "arc"
-      "firefox"
       "linearmouse"
 
       "claude-code@latest"
