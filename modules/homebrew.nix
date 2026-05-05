@@ -31,6 +31,8 @@
 
       "brave-browser"
 
+      "redis-insight"
+
       "orbstack"
 
       # ── Productivity / Launchers ──
