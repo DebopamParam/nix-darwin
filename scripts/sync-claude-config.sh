@@ -5,7 +5,7 @@
 
 set -euo pipefail
 
-REPO="$HOME/.config/nix-darwin"
+REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 REPO_CLAUDE="$REPO/modules/claude"
 
 GREEN='\033[1;32m' BLUE='\033[1;34m' DIM='\033[2m' RESET='\033[0m'
@@ -15,12 +15,14 @@ APPLY=false
 
 # ── File pairs ───────────────────────────────────────────────────
 declare -a LIVE=(
+  "$HOME/.claude/settings.json"
   "$HOME/.claude-personal/settings.json"
   "$HOME/.claude-work/settings.json"
   "$HOME/.config/claude-profiles/statusline.sh"
   "$HOME/.claude/plugins/installed_plugins.json"
 )
 declare -a REPO_FILES=(
+  "$REPO_CLAUDE/settings.json"
   "$REPO_CLAUDE/settings.json"
   "$REPO_CLAUDE/settings.json"
   "$REPO_CLAUDE/statusline.sh"
