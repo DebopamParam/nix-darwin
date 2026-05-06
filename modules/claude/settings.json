@@ -1,4 +1,18 @@
 {
+  "model": "opus",
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "rtk hook claude"
+          }
+        ]
+      }
+    ]
+  },
   "statusLine": {
     "type": "command",
     "command": "bash ~/.config/claude-profiles/statusline.sh",
@@ -6,5 +20,6 @@
   },
   "enabledPlugins": {
     "superpowers@claude-plugins-official": false
-  }
+  },
+  "effortLevel": "medium"
 }

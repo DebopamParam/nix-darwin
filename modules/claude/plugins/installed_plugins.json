@@ -1,4 +1,15 @@
 {
   "version": 2,
-  "plugins": {}
+  "plugins": {
+    "playwright@claude-plugins-official": [
+      {
+        "scope": "project",
+        "installPath": "/Users/debopamchowdhury/.claude-work/plugins/cache/claude-plugins-official/playwright/unknown",
+        "version": "unknown",
+        "installedAt": "2026-04-24T21:33:54.951Z",
+        "lastUpdated": "2026-04-24T21:33:54.951Z",
+        "projectPath": "/Users/debopamchowdhury/Desktop/Projects/portfolio"
+      }
+    ]
+  }
 }
