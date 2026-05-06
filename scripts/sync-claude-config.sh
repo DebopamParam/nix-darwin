@@ -13,6 +13,17 @@ GREEN='\033[1;32m' BLUE='\033[1;34m' DIM='\033[2m' RESET='\033[0m'
 APPLY=false
 [[ "${1:-}" == "--apply" ]] && APPLY=true
 
+# ── Ensure ccstatusline is installed ─────────────────────────────
+if ! [[ -f "$(npm root -g 2>/dev/null)/ccstatusline/dist/ccstatusline.js" ]]; then
+  echo -e "${BLUE}ccstatusline is not installed globally.${RESET}"
+  read -rp "Install it now with 'sudo npm install -g ccstatusline'? [y/N] " ans
+  if [[ "$ans" =~ ^[Yy]$ ]]; then
+    sudo npm install -g ccstatusline
+  else
+    echo -e "${DIM}Skipping ccstatusline install — statusline will be empty until installed.${RESET}"
+  fi
+fi
+
 # ── File pairs ───────────────────────────────────────────────────
 declare -a LIVE=(
   "$HOME/.claude/settings.json"
