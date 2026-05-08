@@ -1,0 +1,21 @@
+# Declarative manifest of Claude Code plugins/marketplaces this repo wants installed.
+# scripts/bootstrap-claude-plugins.sh reads this and uses fzf to pick what to install
+# on the current machine. Idempotent.
+#
+# Schema:
+#   [[marketplace]] name=<short-name> repo=<github owner/repo>
+#   [[plugin]]      name=<plugin>     marketplace=<short-name>  scope=user|project|local  profile=default|personal|work
+
+[[marketplace]]
+name = "claude-plugins-official"
+repo = "anthropics/claude-plugins-official"
+
+[[marketplace]]
+name = "karpathy-skills"
+repo = "forrestchang/andrej-karpathy-skills"
+
+[[plugin]]
+name        = "andrej-karpathy-skills"
+marketplace = "karpathy-skills"
+scope       = "user"
+profile     = "personal"

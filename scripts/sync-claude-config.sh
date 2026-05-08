@@ -30,7 +30,6 @@ declare -a LIVE=(
   "$HOME/.claude-personal/settings.json"
   "$HOME/.claude-work/settings.json"
   "$HOME/.config/claude-profiles/statusline.sh"
-  "$HOME/.claude/plugins/installed_plugins.json"
   "$HOME/.config/ccstatusline/settings.json"
   "$HOME/.claude/CLAUDE.md"
   "$HOME/.claude/RTK.md"
@@ -42,7 +41,6 @@ declare -a REPO_FILES=(
   "$REPO_CLAUDE/settings.json"
   "$REPO_CLAUDE/settings.json"
   "$REPO_CLAUDE/statusline.sh"
-  "$REPO_CLAUDE/plugins/installed_plugins.json"
   "$REPO_CLAUDE/ccstatusline-settings.json"
   "$REPO_CLAUDE/CLAUDE.md"
   "$REPO_CLAUDE/RTK.md"
@@ -204,6 +202,7 @@ done
 
 if $APPLY; then
   echo -e "${GREEN}Applied. Claude dirs are now up to date.${RESET}"
+  echo -e "${DIM}Plugins are not synced; run scripts/bootstrap-claude-plugins.sh to pick & install from plugins.toml.${RESET}"
 else
   echo -e "${GREEN}Synced. Review with 'git diff' in $REPO, then commit.${RESET}"
 fi

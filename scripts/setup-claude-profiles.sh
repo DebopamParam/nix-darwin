@@ -65,6 +65,12 @@ _CLAUDE_BASE="$(eval echo ~)"
 alias claude-personal="CLAUDE_CONFIG_DIR=${_CLAUDE_BASE}/.claude-personal command claude"
 alias claude-work="CLAUDE_CONFIG_DIR=${_CLAUDE_BASE}/.claude-work command claude"
 
+# Sync helpers — point at the nix-darwin checkout. Override CLAUDE_NIX_REPO if
+# you cloned it elsewhere (e.g. ~/dotfiles/nix-darwin).
+: "${CLAUDE_NIX_REPO:=${_CLAUDE_BASE}/.config/nix-darwin}"
+alias sync-claude="bash ${CLAUDE_NIX_REPO}/scripts/sync-claude-config.sh"
+alias apply-claude="bash ${CLAUDE_NIX_REPO}/scripts/sync-claude-config.sh --apply"
+
 # Block bare `claude` — a function shadows the binary and can't be bypassed
 claude() {
   echo "❌  Don't use 'claude' directly. Use:" >&2
