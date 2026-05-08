@@ -23,7 +23,16 @@
     # };
 
     # Declarative Homebrew management
-    nix-homebrew.url = "github:zhaofengli/nix-homebrew";
+    nix-homebrew = {
+      url = "github:zhaofengli/nix-homebrew";
+      # Override the brew version pinned by nix-homebrew (5.1.7) which has a
+      # parser crash on the current cask JSON API. 5.1.10 fixes it.
+      inputs.brew-src.follows = "brew-src";
+    };
+    brew-src = {
+      url = "github:Homebrew/brew";
+      flake = false;
+    };
 
   };
 
