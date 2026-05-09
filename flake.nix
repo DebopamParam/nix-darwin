@@ -45,16 +45,17 @@
     ...
   }: let
     # ═══════════════════════════════════════════
-    #  EDIT THESE TWO VALUES
+    #  Per-machine values live in ./private.nix
+    #  (gitignored). Copy private.nix.example
+    #  to private.nix on a new machine.
     # ═══════════════════════════════════════════
-    username = "debopamchowdhury";       # ← output of: whoami
-    hostname = "Debopams-MacBook-Pro";         # ← output of: scutil --get LocalHostName
-    system   = "aarch64-darwin";      # Apple Silicon (M-series)
+    private = import ./private.nix;
+    inherit (private) username hostname system;
   in {
 
     darwinConfigurations.${hostname} = nix-darwin.lib.darwinSystem {
       inherit system;
-      specialArgs = { inherit inputs username hostname; };
+      specialArgs = { inherit inputs username hostname private; };
       modules = [
 
         # ── System config (packages + macOS settings) ──
@@ -85,7 +86,7 @@
             useGlobalPkgs = true;
             useUserPackages = true;
             # backupFileExtension = "backup";
-            extraSpecialArgs = { inherit inputs; };
+            extraSpecialArgs = { inherit inputs private; };
             users.${username} = import ./modules/home.nix;
           };
         }

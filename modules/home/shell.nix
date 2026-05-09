@@ -1,4 +1,4 @@
-{ pkgs, lib, ... }:
+{ pkgs, lib, private, ... }:
 
 {
   # ── Zsh ───────────────────────────────────────────────────────
@@ -65,7 +65,13 @@
         export PATH="$HOME/.local/bin:$PATH"
 
         # Tunnel helper
-        tunnel-port() { ngrok http --domain=nonreducibly-unretrograded-danna.ngrok-free.dev "$1"; }
+        tunnel-port() {
+          ${if private.ngrokDomain == "" then ''
+            ngrok http "$1"
+          '' else ''
+            ngrok http --domain=${private.ngrokDomain} "$1"
+          ''}
+        }
 
         # SSH host picker — parses ~/.ssh/config and fuzzy-selects a host
         ssh-pick() {

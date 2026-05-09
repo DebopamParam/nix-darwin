@@ -1,4 +1,4 @@
-{ ... }:
+{ private, ... }:
 
 {
   # ── Git ───────────────────────────────────────────────────────
@@ -7,8 +7,8 @@
     enable = true;
 
     settings = {
-      user.name = "DebopamChowdhury";
-      user.email = "debopamwork@gmail.com";
+      user.name = private.git.name;
+      user.email = private.git.email;
       init.defaultBranch = "main";
       push.autoSetupRemote = true;
       pull.rebase = true;

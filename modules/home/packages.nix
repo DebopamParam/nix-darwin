@@ -1,9 +1,9 @@
-{ pkgs, ... }:
+{ pkgs, private, ... }:
 
 {
   home.stateVersion = "24.11";
-  home.username = "debopamchowdhury";
-  home.homeDirectory = "/Users/debopamchowdhury";
+  home.username = private.username;
+  home.homeDirectory = "/Users/${private.username}";
 
   # ── User Packages ─────────────────────────────────────────────
 

@@ -3,7 +3,7 @@
 {
   # ── Primary User (required by recent nix-darwin) ───────────────
 
-  system.primaryUser = "debopamchowdhury";
+  system.primaryUser = username;
 
   # ── Shell ─────────────────────────────────────────────────────
 
@@ -14,8 +14,8 @@
 
   # ── User Account ───────────────────────────────────────────────
 
-  users.users.debopamchowdhury = {
-    name = "debopamchowdhury";
-    home = "/Users/debopamchowdhury";
+  users.users.${username} = {
+    name = username;
+    home = "/Users/${username}";
   };
 }
