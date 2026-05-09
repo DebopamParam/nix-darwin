@@ -36,6 +36,8 @@
 
       "orbstack"
 
+      "appcleaner"
+
       # ── Productivity / Launchers ──
       "raycast"                 # Spotlight replacement — try native Spotlight first if you want
       "obsidian"                # Markdown notes / second brain
