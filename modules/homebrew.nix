@@ -51,6 +51,9 @@
       "stats"                   # System monitor in menu bar
 
       "visual-studio-code"
+      "cursor"
+      "claude"
+      "codex-app"
 
       "ngrok"
 
