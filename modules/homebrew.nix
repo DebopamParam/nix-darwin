@@ -36,6 +36,8 @@
 
       "orbstack"
 
+      "rustdesk"
+
       "appcleaner"
 
       # ── Productivity / Launchers ──
