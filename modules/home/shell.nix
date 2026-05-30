@@ -41,6 +41,9 @@
 
       llmctx = "bash ~/.config/nix-darwin/scripts/repo2md.sh";
 
+      # Zip current dir into ../<dir>.zip, honoring .gitignore
+      repo-to-zip = "bash ~/.config/nix-darwin/scripts/repo-to-zip.sh";
+
       start-venv = "source .venv/bin/activate";
 
       my-machine-clean = "bash ~/.config/nix-darwin/scripts/machine-clean.sh";
