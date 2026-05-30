@@ -8,7 +8,7 @@ set -euo pipefail
 #   repo-to-zip [output.zip] [source_dir]
 #
 # Defaults:
-#   output.zip = <dirname>.zip   (in the parent directory)
+#   output.zip = <dirname>.zip   (inside the directory itself)
 #   source_dir = .
 #
 # Behavior:
@@ -24,7 +24,7 @@ SOURCE_DIR="${2:-.}"
 cd "$SOURCE_DIR"
 
 DIR_NAME="$(basename "$(pwd)")"
-OUTPUT="${1:-../${DIR_NAME}.zip}"
+OUTPUT="${1:-${DIR_NAME}.zip}"
 
 # Resolve OUTPUT to an absolute path so `cd`-relative zipping is safe.
 OUTPUT_DIR="$(cd "$(dirname "$OUTPUT")" && pwd)"
@@ -48,7 +48,8 @@ if git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
     | xargs -0 zip -q "$OUTPUT" --
 else
   echo "→ not a git repo — zipping everything (skipping .git, node_modules)"
-  zip -q -r "$OUTPUT" . -x '*/.git/*' '.git/*' '*/node_modules/*' 'node_modules/*'
+  zip -q -r "$OUTPUT" . \
+    -x '*/.git/*' '.git/*' '*/node_modules/*' 'node_modules/*' "$(basename "$OUTPUT")"
 fi
 
 COUNT="$(unzip -l "$OUTPUT" | tail -1 | awk '{print $2}')"
