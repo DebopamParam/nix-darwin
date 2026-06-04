@@ -38,6 +38,8 @@
 
       "rustdesk"
 
+      "ollama-app"
+
       "appcleaner"
 
       # ── Productivity / Launchers ──
