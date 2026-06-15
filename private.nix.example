@@ -48,4 +48,13 @@
   # Reserve one at: https://dashboard.ngrok.com/domains
   # Leave as "" to let ngrok assign a random domain on each tunnel.
   ngrokDomain = "";
+
+  # ── Cloudflare Tunnel ───────────────────────────────────────────
+  # Used by `tunnel-port --cf <subdomain> <port>` to expose a local
+  # port at <subdomain>.<cfDomain>. The domain must be on Cloudflare
+  # nameservers. One-time setup:
+  #   cloudflared tunnel login
+  #   cloudflared tunnel create dev-local
+  cfDomain = "example.com";
+  cfTunnel = "dev-local";
 }

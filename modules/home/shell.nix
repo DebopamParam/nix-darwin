@@ -8,6 +8,17 @@
     autosuggestion.enable = true;
     syntaxHighlighting.enable = true;
 
+    # Login-shell setup (generated into ~/.zprofile, managed by home-manager).
+    # Migrated from the pre-existing ~/.zprofile created by the Homebrew
+    # installer and OrbStack.
+    profileExtra = ''
+      # Homebrew (Apple Silicon) — puts /opt/homebrew/bin on PATH, sets MANPATH, etc.
+      eval "$(/opt/homebrew/bin/brew shellenv)"
+
+      # OrbStack: command-line tools and integration
+      source ~/.orbstack/shell/init.zsh 2>/dev/null || :
+    '';
+
     plugins = [
       {
         name = "fzf-tab";
@@ -41,6 +52,9 @@
 
       llmctx = "bash ~/.config/nix-darwin/scripts/repo2md.sh";
 
+      # Expose a local port via ngrok or Cloudflare (see scripts/tunnel-port.sh)
+      tunnel-port = "bash ~/.config/nix-darwin/scripts/tunnel-port.sh";
+
       # Zip current dir into ./<dir>.zip, honoring .gitignore
       repo-to-zip = "bash ~/.config/nix-darwin/scripts/repo-to-zip.sh";
 
@@ -67,14 +81,11 @@
         # microsandbox
         export PATH="$HOME/.local/bin:$PATH"
 
-        # Tunnel helper
-        tunnel-port() {
-          ${if private.ngrokDomain == "" then ''
-            ngrok http "$1"
-          '' else ''
-            ngrok http --domain=${private.ngrokDomain} "$1"
-          ''}
-        }
+        # Tunnel helper config — values from private.nix, consumed by
+        # scripts/tunnel-port.sh (aliased to `tunnel-port`).
+        export TUNNEL_CF_DOMAIN="${private.cfDomain}"
+        export TUNNEL_CF_NAME="${private.cfTunnel}"
+        export TUNNEL_NGROK_DOMAIN="${private.ngrokDomain}"
 
         # SSH host picker — parses ~/.ssh/config and fuzzy-selects a host
         ssh-pick() {

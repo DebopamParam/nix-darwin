@@ -46,6 +46,7 @@
     ffmpeg
     imagemagick
     mas           # Mac App Store CLI — needed for masApps
+    cloudflared   # Cloudflare Tunnel client — used by `tunnel-port --cf`
   ];
 
   nixpkgs.config.allowUnfree = true;
