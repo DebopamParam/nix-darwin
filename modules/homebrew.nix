@@ -40,6 +40,10 @@
 
       "ollama-app"
 
+      "pgadmin4"
+
+      "cyberduck"
+
       "appcleaner"
 
       # ── Productivity / Launchers ──
