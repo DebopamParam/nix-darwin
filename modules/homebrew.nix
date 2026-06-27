@@ -84,6 +84,8 @@
       "slack"
       "discord"
 
+      "dbeaver-community"
+
       # ── Media ──
       "iina"                    # Best video player for Mac
       "vlc"
