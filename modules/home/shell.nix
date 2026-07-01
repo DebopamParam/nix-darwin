@@ -51,7 +51,7 @@
       apply-claude = "bash ~/.config/nix-darwin/scripts/sync-claude-config.sh --apply";
 
       # Sync obsidian
-      sync-obsidian = "bash ~/Documents/turboml-docs/sync-to-obsidian.sh"
+      sync-obsidian = "bash ~/Documents/turboml-docs/sync-to-obsidian.sh";
 
       llmctx = "bash ~/.config/nix-darwin/scripts/repo2md.sh";
 
