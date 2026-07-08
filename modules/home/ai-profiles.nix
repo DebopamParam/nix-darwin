@@ -1,6 +1,6 @@
 { ... }:
 
-# Unified profile model for Claude Code and Codex (see notes/temp.md).
+# Unified profile model for Claude Code and Codex.
 #
 #   ~/.claude / ~/.codex        canonical home — holds ALL non-auth config
 #   ~/.claude-<p> / ~/.codex-<p> profile home — selects an account; every

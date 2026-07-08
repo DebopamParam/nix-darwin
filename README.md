@@ -144,7 +144,7 @@ darwin-rebuild --list-generations
 | `apply-ai` | apply repo's Claude + Codex config to live `~/.claude` & `~/.codex` |
 | `llmctx` | `repo2md.sh` — dump current repo as markdown for LLM context |
 | `start-venv` | `source .venv/bin/activate` |
-| `my-machine-clean` | `machine-clean.sh` — disk cleanup |
+| `my-machine-clean` | `clean.sh` — unified cleanup menu: `apps` (remove apps + all their data), `orphans` (leftover data of deleted apps), `system` / `deep` (nix GC, brew, Docker, dev caches) |
 | `my-nix-update` | `update-select.sh` — selective flake input updater |
 | `sshp` | `ssh-pick` — fzf SSH host picker (parses `~/.ssh/config`) |
 | `tmux-pick` | fzf tmux session picker |
@@ -194,7 +194,9 @@ Enabled in `modules/system/users.nix` via `security.pam.services.sudo_local.touc
 
 | Script | What it does |
 |---|---|
+| `clean.sh` | Unified entry point for all manual cleanup (the `my-machine-clean` alias). Interactive menu or direct: `apps` / `orphans` → `app-zap.sh`, `system` / `deep` → `machine-clean.sh`. |
 | `machine-clean.sh` | Safe macOS cleanup across Nix store, Homebrew, Docker/OrbStack, npm, uv/pip, Xcode. Always prunes stopped containers + dangling images + unused networks; uses fzf to optionally also prune build cache, volumes, and unused images. `--deep` for aggressive mode. |
+| `app-zap.sh` | Interactive app remover covering **all** apps (brew casks, Mac App Store, manual installs). fzf multi-select → full deletion manifest (app + every data path, with sizes) → double confirmation → moved to Trash (recoverable; `--permanent` to rm). Brew apps are zapped via `brew uninstall --zap` and the matching `homebrew.nix` line is offered for removal so the next rebuild doesn't reinstall. `--orphans` mode finds leftover `~/Library` data of apps that are already gone. `--dry-run` previews without touching anything. |
 | `update-select.sh` | Interactive picker over flake inputs — update only the ones you choose, instead of `nix flake update`-everything. |
 | `setup-ai-profiles.sh` | Bash mirror of `ai-profiles.nix` for non-nix machines (Linux containers): installs the `claude-use` / `codex-use` launchers into `~/.config/ai-profiles` and wires `~/.bashrc`. |
 | `sync-ai-config.sh` | Two-way sync of the canonical `~/.claude` & `~/.codex` config into the repo (default) or out to live (`--apply`). |
@@ -203,7 +205,7 @@ Enabled in `modules/system/users.nix` via `security.pam.services.sudo_local.touc
 
 ## Claude & Codex profiles
 
-The non-obvious bit — a unified profile model for both tools (spec in `notes/temp.md`).
+The non-obvious bit — a unified profile model for both tools.
 
 Each tool has **one canonical home** holding *all* non-auth config:
 

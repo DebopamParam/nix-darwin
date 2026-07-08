@@ -5,15 +5,15 @@
 #   ./remote-setup.sh [--dry-run] [--yes] [--user NAME] [--email EMAIL]
 #
 #   --yes         skip interactive selector, install all minimal defaults
-#   --user NAME   git user.name  (default: DebopamChowdhury)
-#   --email EMAIL git user.email (default: debopamwork@gmail.com)
+#   --user NAME   git user.name  (prompted if omitted)
+#   --email EMAIL git user.email (prompted if omitted)
 #   --dry-run     print what would happen, touch nothing
 #   -h|--help     show this message
 
 set -euo pipefail
 
-GIT_NAME="DebopamChowdhury"
-GIT_EMAIL="debopamwork@gmail.com"
+GIT_NAME=""
+GIT_EMAIL=""
 DRY_RUN=false
 YES=false
 SELECTED_KEYS=()
@@ -217,6 +217,10 @@ ok "tmux installed and configured"
 
 install_git_config() {
   log "Configuring git..."
+  # Identity comes from --user/--email; prompt for anything missing so no
+  # personal defaults live in this (public) script.
+  [[ -z "$GIT_NAME"  ]] && read -rp "git user.name: "  GIT_NAME
+  [[ -z "$GIT_EMAIL" ]] && read -rp "git user.email: " GIT_EMAIL
   run git config --global user.name  "$GIT_NAME"
   run git config --global user.email "$GIT_EMAIL"
   run git config --global init.defaultBranch main

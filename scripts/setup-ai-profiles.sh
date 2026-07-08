@@ -3,7 +3,7 @@
 # (e.g. Linux dev containers without nix-darwin).
 #
 # Installs ~/.config/ai-profiles/{profile-sync.sh,init.sh} and sources init.sh
-# from ~/.bashrc. The unified model (see notes/temp.md):
+# from ~/.bashrc. The unified model:
 #   ~/.claude / ~/.codex        canonical home (all non-auth config)
 #   ~/.claude-<p> / ~/.codex-<p> profile home (symlinks + real auth files only)
 #

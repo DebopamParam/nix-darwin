@@ -5,11 +5,14 @@
     enable = true;
 
     onActivation = {
-      autoUpdate = true;       # Don't slow down every rebuild
+      # true = refresh brew metadata on every activation. Keeps installs
+      # current but makes rebuilds slower and less reproducible; set to
+      # false to update only deliberately (via `my-nix-update`).
+      autoUpdate = true;
       upgrade = false;
-      # ⚠️  START WITH "none" — this prevents nuking your existing brew packages
-      #     on the first run. Once you've added everything you need to this
-      #     config, change to "zap" for full declarative control.
+      # "zap" = full declarative control: anything NOT declared below is
+      # uninstalled on rebuild AND its app data removed (per the cask's
+      # zap stanza). Add a cask here before installing it, never ad-hoc.
       cleanup = "zap";
     };
 
@@ -26,25 +29,29 @@
     casks = [
       # ── Browsers ──
       "arc"
-      "linearmouse"
-
-      "claude-code@latest"
-
       "brave-browser"
 
-      "redis-insight"
-
-      "orbstack"
-
-      "rustdesk"
-
+      # ── AI Tools ──
+      "claude"                   # Claude desktop app
+      "claude-code@latest"       # Claude Code CLI
+      "codex-app"                # Codex desktop GUI app
+      "codex"                    # Codex terminal CLI (provides `codex` on PATH)
       "ollama-app"
 
+      # ── Editors ──
+      "visual-studio-code"
+      "cursor"
+
+      # ── Dev: Containers / Databases / Networking ──
+      "orbstack"
+      "redis-insight"
       "pgadmin4"
+      "mongodb-compass"
+      "dbeaver-community"
+      "ngrok"
 
-      "cyberduck"
-
-      "appcleaner"
+      # ── Terminals ──
+      "ghostty"
 
       # ── Productivity / Launchers ──
       "raycast"                 # Spotlight replacement — try native Spotlight first if you want
@@ -58,34 +65,19 @@
       "jordanbaird-ice"         # Hide menu bar clutter (free, open source)
       "stats"                   # System monitor in menu bar
 
-      "visual-studio-code"
-      "cursor"
-      "claude"
-      "codex-app"                # Codex desktop GUI app
-      "codex"                    # Codex terminal CLI (provides `codex` on PATH)
-
-      "ngrok"
-
-      # ── Notch ──
-      # "notchnook"               # Turn the notch into a utility hub
-      # Alternative (free): install BoringNotch manually or via:
-
-      # ── Terminals ──
-      "ghostty"
-
-      # -- mongodb --
-      "mongodb-compass"
+      # ── Remote Access / File Transfer ──
+      "rustdesk"
+      "cyberduck"
 
       # ── Utilities ──
       "the-unarchiver"          # RAR, 7z, etc.
       "appcleaner"              # Clean uninstall apps
       "monitorcontrol"          # External display brightness via keyboard
+      "linearmouse"             # Per-device mouse/trackpad settings
 
       # ── Communication ──
       "slack"
       "discord"
-
-      "dbeaver-community"
 
       # ── Media ──
       "iina"                    # Best video player for Mac
@@ -95,9 +87,9 @@
       "qlmarkdown"
       "syntax-highlight"
 
-      # ── Add your existing brew casks below ──
-      # Run `brew list --cask` to see what you currently have installed.
-      # Add them here so they survive when you switch cleanup to "zap".
+      # ── Notch (candidates, not installed) ──
+      # "notchnook"             # Turn the notch into a utility hub
+      # Alternative (free): install BoringNotch manually
     ];
 
     # ── Mac App Store Apps ──────────────────────────────────────

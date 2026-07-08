@@ -63,7 +63,11 @@
 
       start-venv = "source .venv/bin/activate";
 
-      my-machine-clean = "bash ~/.config/nix-darwin/scripts/machine-clean.sh";
+      # Unified manual cleanup — `my-machine-clean` for the menu, or directly:
+      # `my-machine-clean apps` (remove apps + all their data), `... orphans`
+      # (leftover data of deleted apps), `... system` / `... deep`
+      # (nix GC, brew, Docker, dev caches).
+      my-machine-clean = "bash ~/.config/nix-darwin/scripts/clean.sh";
 
       # In shellAliases:
       my-nix-update = "bash ~/.config/nix-darwin/scripts/update-select.sh";
