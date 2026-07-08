@@ -61,7 +61,8 @@
       "visual-studio-code"
       "cursor"
       "claude"
-      "codex-app"
+      "codex-app"                # Codex desktop GUI app
+      "codex"                    # Codex terminal CLI (provides `codex` on PATH)
 
       "ngrok"
 
