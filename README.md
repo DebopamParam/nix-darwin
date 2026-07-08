@@ -39,19 +39,22 @@ modules/
         ├── git.nix          git + delta (side-by-side diffs)
         ├── tmux.nix         vi-mode, mouse, custom split/resize keymap
         ├── direnv.nix       direnv + nix-direnv
-        └── claude-profiles.nix
-                             Builds ~/.claude-personal & ~/.claude-work that
-                             symlink the shared plugins/settings, and installs
-                             a `claude-personal` / `claude-work` shell wrapper
-                             that blocks bare `claude`.
+        └── ai-profiles.nix
+                             Installs ~/.config/ai-profiles/{profile-sync.sh,
+                             init.sh}: generic `claude-use` / `codex-use`
+                             launchers (+ `*-ls`) that sync a profile home to
+                             the canonical config before launch, and block bare
+                             `claude` / `codex`.
 
-modules/claude/              Claude Code config tracked in this repo
-├── settings.json            Shared settings
+modules/claude/              Canonical Claude config tracked in this repo
+├── settings.json            Shared settings (model, rtk hook, statusline)
 ├── statusline.sh            Custom statusline
 ├── ccstatusline-settings.json
-├── plugins/plugins.toml     Pinned plugins
-├── personal/CLAUDE.md       Personal-profile instructions
-└── work/CLAUDE.md           Work-profile instructions
+├── CLAUDE.md                Shared instructions
+└── RTK.md
+
+modules/codex/               Canonical Codex config tracked in this repo
+└── config.toml
 
 scripts/                     Operational helpers (see "Scripts" section)
 notes/                       Long-form docs (e.g. notes/homebrew.md)
@@ -137,8 +140,8 @@ darwin-rebuild --list-generations
 | `g` `gs` `gc` `gp` `gd` `gl` | `git` / `status` / `commit` / `push` / `diff` / `log --oneline --graph --decorate -20` |
 | `lg` | `lazygit` |
 | `rebuild` | `sudo darwin-rebuild switch --flake ~/.config/nix-darwin` |
-| `sync-claude` | dump live Claude config back into the repo |
-| `apply-claude` | apply repo's Claude config to live `~/.claude` |
+| `sync-ai` | dump live Claude + Codex config back into the repo |
+| `apply-ai` | apply repo's Claude + Codex config to live `~/.claude` & `~/.codex` |
 | `llmctx` | `repo2md.sh` — dump current repo as markdown for LLM context |
 | `start-venv` | `source .venv/bin/activate` |
 | `my-machine-clean` | `machine-clean.sh` — disk cleanup |
@@ -150,7 +153,7 @@ darwin-rebuild --list-generations
 
 - `tunnel-port <port>` — bring up an ngrok HTTPS tunnel on the reserved free domain
 - `ssh-pick` — fuzzy-pick from `~/.ssh/config`, with a preview pane showing resolved `hostname/user/port/identityfile`
-- `claude-personal` / `claude-work` — launch Claude Code with the right `CLAUDE_CONFIG_DIR`. Bare `claude` is blocked by a shell function so you can't accidentally write to the wrong profile.
+- `claude-use <profile>` / `codex-use <profile>` — launch Claude Code / Codex under `~/.claude-<profile>` / `~/.codex-<profile>`, syncing the profile to the canonical config first. `claude-ls` / `codex-ls` list existing profiles. Bare `claude` / `codex` are blocked by shell functions so you can't accidentally write to the wrong account.
 
 ### Tmux (`modules/home/tmux.nix`)
 
@@ -193,23 +196,38 @@ Enabled in `modules/system/users.nix` via `security.pam.services.sudo_local.touc
 |---|---|
 | `machine-clean.sh` | Safe macOS cleanup across Nix store, Homebrew, Docker/OrbStack, npm, uv/pip, Xcode. Always prunes stopped containers + dangling images + unused networks; uses fzf to optionally also prune build cache, volumes, and unused images. `--deep` for aggressive mode. |
 | `update-select.sh` | Interactive picker over flake inputs — update only the ones you choose, instead of `nix flake update`-everything. |
-| `bootstrap-claude-plugins.sh` | Installs Claude Code plugins listed in `modules/claude/plugins/plugins.toml`. |
-| `setup-claude-profiles.sh` | Idempotent setup for the `personal` / `work` profile dirs. |
-| `sync-claude-config.sh` | Two-way sync: pulls live `~/.claude` config into the repo (default) or applies the repo's config to live (`--apply`). |
+| `setup-ai-profiles.sh` | Bash mirror of `ai-profiles.nix` for non-nix machines (Linux containers): installs the `claude-use` / `codex-use` launchers into `~/.config/ai-profiles` and wires `~/.bashrc`. |
+| `sync-ai-config.sh` | Two-way sync of the canonical `~/.claude` & `~/.codex` config into the repo (default) or out to live (`--apply`). |
 | `setup-bash.sh` | Bash environment bootstrap (parity with the zsh setup, for systems that won't run zsh). |
 | `repo2md.sh` | Dump the current repo as a single markdown file you can paste into an LLM. Used via the `llmctx` alias. |
 
-## Claude Code profiles
+## Claude & Codex profiles
 
-The non-obvious bit. `modules/home/claude-profiles.nix` does three things on every rebuild:
+The non-obvious bit — a unified profile model for both tools (spec in `notes/temp.md`).
 
-1. Creates `~/.claude/plugins`, `~/.claude-personal/`, `~/.claude-work/` if missing.
-2. Symlinks `~/.claude/plugins`, `~/.claude/settings.json`, `~/.claude/CLAUDE.md` into each profile dir, so plugins and shared settings stay in sync.
-3. Writes `~/.config/claude-profiles/init.sh`, sourced by zsh, that:
-   - Defines `claude-personal` / `claude-work` aliases that set `CLAUDE_CONFIG_DIR` before launching `claude`.
-   - Replaces bare `claude` with a shell function that prints an error so you can't accidentally use the wrong account.
+Each tool has **one canonical home** holding *all* non-auth config:
 
-Auth tokens and session history live under `~/.claude-{personal,work}/` and are intentionally **not** symlinked — that's what keeps the accounts separate.
+- `~/.claude` (settings, `CLAUDE.md`, agents, commands, hooks, plugins, session state…)
+- `~/.codex` (`config.toml`, …)
+
+A **profile home** (`~/.claude-<profile>`, `~/.codex-<profile>`) only selects an
+account. In it, **every non-auth entry is a symlink back to canonical**; only the
+auth files stay real — that's what keeps accounts separate:
+
+- Claude: `.claude.json`, `.credentials.json`
+- Codex: `auth.json`
+
+`modules/home/ai-profiles.nix` installs two files under `~/.config/ai-profiles/`:
+
+1. `profile-sync.sh` — the sync engine: on each launch it promotes any genuinely
+   new non-auth profile entry up into canonical, then relinks everything (existing
+   non-auth entries are discarded and replaced with fresh symlinks — no backups).
+2. `init.sh` (sourced by zsh) — defines `claude-use <profile>` / `codex-use <profile>`
+   (which sync, then launch with `CLAUDE_CONFIG_DIR` / `CODEX_HOME` set),
+   `claude-ls` / `codex-ls`, and shell functions that block bare `claude` / `codex`.
+
+Add a new account by just launching a new profile and logging in once:
+`claude-use <anything>`. There are no hardcoded profile names.
 
 ## Caveats
 

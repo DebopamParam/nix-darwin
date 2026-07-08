@@ -46,9 +46,9 @@
       # Nix rebuild
       rebuild = "sudo darwin-rebuild switch --flake ~/.config/nix-darwin";
 
-      # Claude config sync
-      sync-claude  = "bash ~/.config/nix-darwin/scripts/sync-claude-config.sh";
-      apply-claude = "bash ~/.config/nix-darwin/scripts/sync-claude-config.sh --apply";
+      # Claude + Codex config sync (canonical dirs ↔ repo)
+      sync-ai  = "bash ~/.config/nix-darwin/scripts/sync-ai-config.sh";
+      apply-ai = "bash ~/.config/nix-darwin/scripts/sync-ai-config.sh --apply";
 
       # Sync obsidian
       sync-obsidian = "bash ~/Documents/turboml-docs/sync-to-obsidian.sh";
@@ -106,9 +106,9 @@
           [[ -n "$host" ]] && ssh "$host"
         }
 
-        # Claude Code profiles — source the shared script so host shell
+        # Claude + Codex profiles — source the shared script so host shell
         # behaves identically to dev containers
-        source $HOME/.config/claude-profiles/init.sh
+        source $HOME/.config/ai-profiles/init.sh
       ''
     ];
   };

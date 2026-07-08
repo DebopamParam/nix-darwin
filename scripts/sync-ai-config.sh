@@ -1,12 +1,17 @@
 #!/usr/bin/env bash
+# Sync canonical Claude + Codex config between the live homes and this repo.
+# All non-auth config lives in the canonical homes (~/.claude, ~/.codex);
+# profile homes are just symlinks, so there's nothing per-profile to sync.
+#
 # Usage:
-#   sync-claude-config.sh           # Claude dirs → nix repo
-#   sync-claude-config.sh --apply   # nix repo → Claude dirs
+#   sync-ai-config.sh           # live dirs → nix repo   (pull)
+#   sync-ai-config.sh --apply   # nix repo → live dirs   (push)
 
 set -euo pipefail
 
 REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 REPO_CLAUDE="$REPO/modules/claude"
+REPO_CODEX="$REPO/modules/codex"
 
 GREEN='\033[1;32m' BLUE='\033[1;34m' DIM='\033[2m' RESET='\033[0m'
 
@@ -24,28 +29,24 @@ if ! [[ -f "$(npm root -g 2>/dev/null)/ccstatusline/dist/ccstatusline.js" ]]; th
   fi
 fi
 
-# ── File pairs ───────────────────────────────────────────────────
+# ── File pairs (live ↔ repo) ─────────────────────────────────────
 declare -a LIVE=(
   "$HOME/.claude/settings.json"
-  "$HOME/.claude-personal/settings.json"
-  "$HOME/.claude-work/settings.json"
-  "$HOME/.config/claude-profiles/statusline.sh"
-  "$HOME/.config/ccstatusline/settings.json"
   "$HOME/.claude/CLAUDE.md"
   "$HOME/.claude/RTK.md"
-  "$HOME/.claude-personal/CLAUDE.md"
-  "$HOME/.claude-work/CLAUDE.md"
+  "$HOME/.config/ai-profiles/statusline.sh"
+  "$HOME/.config/ccstatusline/settings.json"
+  "$HOME/.codex/config.toml"
+  "$HOME/.codex/AGENTS.md"
 )
 declare -a REPO_FILES=(
   "$REPO_CLAUDE/settings.json"
-  "$REPO_CLAUDE/settings.json"
-  "$REPO_CLAUDE/settings.json"
-  "$REPO_CLAUDE/statusline.sh"
-  "$REPO_CLAUDE/ccstatusline-settings.json"
   "$REPO_CLAUDE/CLAUDE.md"
   "$REPO_CLAUDE/RTK.md"
-  "$REPO_CLAUDE/personal/CLAUDE.md"
-  "$REPO_CLAUDE/work/CLAUDE.md"
+  "$REPO_CLAUDE/statusline.sh"
+  "$REPO_CLAUDE/ccstatusline-settings.json"
+  "$REPO_CODEX/config.toml"
+  "$REPO_CODEX/AGENTS.md"
 )
 
 # ── Directory pairs (synced wholesale via rsync --delete) ────────
@@ -53,23 +54,11 @@ declare -a LIVE_DIRS=(
   "$HOME/.claude/agents"
   "$HOME/.claude/commands"
   "$HOME/.claude/hooks"
-  "$HOME/.claude-personal/agents"
-  "$HOME/.claude-personal/commands"
-  "$HOME/.claude-personal/hooks"
-  "$HOME/.claude-work/agents"
-  "$HOME/.claude-work/commands"
-  "$HOME/.claude-work/hooks"
 )
 declare -a REPO_DIRS=(
   "$REPO_CLAUDE/agents"
   "$REPO_CLAUDE/commands"
   "$REPO_CLAUDE/hooks"
-  "$REPO_CLAUDE/personal/agents"
-  "$REPO_CLAUDE/personal/commands"
-  "$REPO_CLAUDE/personal/hooks"
-  "$REPO_CLAUDE/work/agents"
-  "$REPO_CLAUDE/work/commands"
-  "$REPO_CLAUDE/work/hooks"
 )
 
 if $APPLY; then
@@ -77,30 +66,16 @@ if $APPLY; then
   DSTS=("${LIVE[@]}")
   DIR_SRCS=("${REPO_DIRS[@]}")
   DIR_DSTS=("${LIVE_DIRS[@]}")
-  DIRECTION="nix-darwin → Claude dirs"
+  DIRECTION="nix-darwin → live dirs"
 else
   SRCS=("${LIVE[@]}")
   DSTS=("${REPO_FILES[@]}")
   DIR_SRCS=("${LIVE_DIRS[@]}")
   DIR_DSTS=("${REPO_DIRS[@]}")
-  DIRECTION="Claude dirs → nix-darwin"
-fi
-
-# ── Custom local plugins (dirs only, exclude cache + marketplaces) ──
-LIVE_PLUGINS_DIR="$HOME/.claude/plugins"
-REPO_PLUGINS_DIR="$REPO_CLAUDE/plugins"
-EXCLUDE_PLUGINS=("cache" "marketplaces")
-
-if $APPLY; then
-  CUSTOM_SRC_BASE="$REPO_PLUGINS_DIR"
-  CUSTOM_DST_BASE="$LIVE_PLUGINS_DIR"
-else
-  CUSTOM_SRC_BASE="$LIVE_PLUGINS_DIR"
-  CUSTOM_DST_BASE="$REPO_PLUGINS_DIR"
+  DIRECTION="live dirs → nix-darwin"
 fi
 
 changed_files=()
-changed_plugins=()
 changed_dirs=()
 
 # ── Check flat file diffs ────────────────────────────────────────
@@ -112,21 +87,6 @@ for i in "${!SRCS[@]}"; do
   fi
 done
 
-# ── Check custom plugin diffs ────────────────────────────────────
-if [[ -d "$CUSTOM_SRC_BASE" ]]; then
-  for plugin_dir in "$CUSTOM_SRC_BASE"/*/; do
-    [[ -d "$plugin_dir" ]] || continue
-    name=$(basename "$plugin_dir")
-    skip=false
-    for ex in "${EXCLUDE_PLUGINS[@]}"; do [[ "$name" == "$ex" ]] && skip=true; done
-    $skip && continue
-    dst_dir="$CUSTOM_DST_BASE/$name"
-    if [[ ! -d "$dst_dir" ]] || ! diff -rq "$plugin_dir" "$dst_dir" &>/dev/null; then
-      changed_plugins+=("$name")
-    fi
-  done
-fi
-
 # ── Check whole-directory diffs ──────────────────────────────────
 for i in "${!DIR_SRCS[@]}"; do
   src_dir="${DIR_SRCS[$i]}"; dst_dir="${DIR_DSTS[$i]}"
@@ -136,7 +96,7 @@ for i in "${!DIR_SRCS[@]}"; do
   fi
 done
 
-if [[ ${#changed_files[@]} -eq 0 && ${#changed_plugins[@]} -eq 0 && ${#changed_dirs[@]} -eq 0 ]]; then
+if [[ ${#changed_files[@]} -eq 0 && ${#changed_dirs[@]} -eq 0 ]]; then
   echo -e "${GREEN}Already in sync ($DIRECTION). Nothing to do.${RESET}"
   exit 0
 fi
@@ -160,12 +120,6 @@ if [[ ${#changed_files[@]} -gt 0 ]]; then
   done
 fi
 
-if [[ ${#changed_plugins[@]} -gt 0 ]]; then
-  echo -e "${BLUE}Changed/new custom plugins:${RESET}"
-  for p in "${changed_plugins[@]}"; do echo "  • $p"; done
-  echo ""
-fi
-
 if [[ ${#changed_dirs[@]} -gt 0 ]]; then
   echo -e "${BLUE}Changed directories:${RESET}"
   for i in "${changed_dirs[@]}"; do
@@ -185,14 +139,6 @@ for i in "${changed_files[@]}"; do
   [[ "$(basename "$dst")" == "statusline.sh" ]] && chmod +x "$dst"
 done
 
-# ── Copy custom plugins ──────────────────────────────────────────
-for p in "${changed_plugins[@]}"; do
-  src_dir="$CUSTOM_SRC_BASE/$p"
-  dst_dir="$CUSTOM_DST_BASE/$p"
-  mkdir -p "$dst_dir"
-  rsync -a --delete "$src_dir/" "$dst_dir/"
-done
-
 # ── Copy whole directories ───────────────────────────────────────
 for i in "${changed_dirs[@]}"; do
   src_dir="${DIR_SRCS[$i]}"; dst_dir="${DIR_DSTS[$i]}"
@@ -201,8 +147,7 @@ for i in "${changed_dirs[@]}"; do
 done
 
 if $APPLY; then
-  echo -e "${GREEN}Applied. Claude dirs are now up to date.${RESET}"
-  echo -e "${DIM}Plugins are not synced; run scripts/bootstrap-claude-plugins.sh to pick & install from plugins.toml.${RESET}"
+  echo -e "${GREEN}Applied. Live dirs are now up to date.${RESET}"
 else
   echo -e "${GREEN}Synced. Review with 'git diff' in $REPO, then commit.${RESET}"
 fi
