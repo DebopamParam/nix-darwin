@@ -88,6 +88,11 @@
         # microsandbox
         export PATH="$HOME/.local/bin:$PATH"
 
+        # Option-Backspace arrives as Meta-Backspace when the terminal treats
+        # Option as Alt (including Ghostty's macos-option-as-alt setting).
+        bindkey '^[^?' backward-kill-word
+        bindkey '^[^H' backward-kill-word
+
         # Tunnel helper config — values from private.nix, consumed by
         # scripts/tunnel-port.sh (aliased to `tunnel-port`).
         export TUNNEL_CF_DOMAIN="${private.cfDomain}"
@@ -116,6 +121,15 @@
       ''
     ];
   };
+
+  # ── Ghostty ───────────────────────────────────────────────────
+
+  home.file.".config/ghostty/config.ghostty".text = ''
+    macos-option-as-alt = true
+
+    # Command has no standard terminal encoding; send zsh's kill-line key.
+    keybind = cmd+backspace=text:\x15
+  '';
 
   programs.zoxide = {
     enable = true;
