@@ -151,7 +151,7 @@ darwin-rebuild --list-generations
 
 ### Shell functions
 
-- `tunnel-port <port>` — bring up an ngrok HTTPS tunnel on the reserved free domain
+- `tunnel-port <port>` — bring up an ngrok HTTPS tunnel on the reserved free domain. `tunnel-port --cf <subdomain> <port>` instead exposes the port at `<subdomain>.<cfDomain>` via a per-subdomain Cloudflare Tunnel (created on first use, takes over on rerun); add `-v` for per-request debug logs
 - `ssh-pick` — fuzzy-pick from `~/.ssh/config`, with a preview pane showing resolved `hostname/user/port/identityfile`
 - `claude-use <profile>` / `codex-use <profile>` — launch Claude Code / Codex under `~/.claude-<profile>` / `~/.codex-<profile>`, syncing the profile to the canonical config first. `claude-ls` / `codex-ls` list existing profiles. Bare `claude` / `codex` are blocked by shell functions so you can't accidentally write to the wrong account.
 

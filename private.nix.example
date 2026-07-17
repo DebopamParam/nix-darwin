@@ -52,9 +52,13 @@
   # ── Cloudflare Tunnel ───────────────────────────────────────────
   # Used by `tunnel-port --cf <subdomain> <port>` to expose a local
   # port at <subdomain>.<cfDomain>. The domain must be on Cloudflare
-  # nameservers. One-time setup:
+  # nameservers. One-time setup is just:
   #   cloudflared tunnel login
-  #   cloudflared tunnel create dev-local
+  #
+  # cfTunnel is a PREFIX: the script creates one tunnel per subdomain
+  # named `<cfTunnel>-<subdomain>` on first use, so nothing needs to be
+  # created ahead of time. Use a value DISTINCT PER MACHINE so two
+  # machines never create tunnels with the same name.
   cfDomain = "example.com";
   cfTunnel = "dev-local";
 }
