@@ -95,6 +95,15 @@ if has_arg "--deep" "$@"; then
   echo -e "${BLUE}[nix] Aggressive cleanup! Removing ALL unpinned garbage...${RESET}"
   nix-collect-garbage -d
   sudo nix-collect-garbage -d
+
+  NIX_CACHE="$HOME/.cache/nix"
+  if [[ -d "$NIX_CACHE" ]]; then
+    size=$(du -sh "$NIX_CACHE" 2>/dev/null | awk '{print $1}')
+    echo -e "${BLUE}[nix] Deep cleanup: removing per-user cache (${size:-unknown size})...${RESET}"
+    rm -rf "$NIX_CACHE"
+  else
+    echo -e "${DIM}[nix] Per-user cache not found — skipping.${RESET}"
+  fi
 else
   echo -e "${BLUE}[nix] Collecting garbage older than 15 days...${RESET}"
   sudo nix-collect-garbage --delete-older-than 15d
