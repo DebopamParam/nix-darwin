@@ -1,0 +1,18 @@
+# Nix build outputs
+result
+result-*
+
+# direnv
+.direnv/
+.envrc
+
+# Claude Code local-only settings (per-machine permission allowlist)
+.claude/settings.local.json
+
+# macOS
+.DS_Store
+
+# Editors
+*.swp
+.idea/
+.vscode/

@@ -1,0 +1,126 @@
+{
+  "version": 3,
+  "lines": [
+    [
+      {
+        "id": "1",
+        "type": "model",
+        "color": "cyan"
+      },
+      {
+        "id": "05498845-4994-48bc-bace-0bc53e918144",
+        "type": "separator"
+      },
+      {
+        "id": "b95fe44d-7cc3-4368-a756-8e6883180742",
+        "type": "thinking-effort"
+      },
+      {
+        "id": "2",
+        "type": "separator"
+      },
+      {
+        "id": "011f1c76-38fb-4ead-81c3-2edf7c89d61a",
+        "type": "context-percentage-usable"
+      },
+      {
+        "id": "7c15afee-fd5e-4d23-904b-2563d3c62c40",
+        "type": "separator"
+      },
+      {
+        "id": "3",
+        "type": "context-length",
+        "color": "brightBlack"
+      },
+      {
+        "id": "4",
+        "type": "separator"
+      },
+      {
+        "id": "5",
+        "type": "git-branch",
+        "color": "magenta"
+      },
+      {
+        "id": "6",
+        "type": "separator"
+      },
+      {
+        "id": "7",
+        "type": "git-changes",
+        "color": "yellow"
+      }
+    ],
+    [
+      {
+        "id": "3bbc942b-8d40-46e0-9c1c-cc7313fd269d",
+        "type": "claude-account-email"
+      },
+      {
+        "id": "32706801-0988-47c9-8358-f6ab74286fa6",
+        "type": "separator"
+      },
+      {
+        "id": "003db577-c225-4f9e-93dc-5038a4bf7603",
+        "type": "session-usage"
+      },
+      {
+        "id": "b8f7c07f-8c31-46d3-ae89-bbec4c482769",
+        "type": "separator"
+      },
+      {
+        "id": "120dadf1-cb34-4296-8763-03fd6da4b6da",
+        "type": "session-clock"
+      },
+      {
+        "id": "eace21c6-bd86-4b3f-b1db-c57d1b2d42bc",
+        "type": "separator"
+      },
+      {
+        "id": "64982fd5-2a56-4b68-bc71-d39fa6aba844",
+        "type": "reset-timer"
+      }
+    ],
+    [
+      {
+        "id": "9ef8800b-78eb-4a3c-942d-2ceaf3b998a1",
+        "type": "skills"
+      },
+      {
+        "id": "202f1444-f6b5-4e6d-bbc6-3db81412b024",
+        "type": "separator"
+      },
+      {
+        "id": "96088010-3d66-49af-a933-ca99fa29fc4e",
+        "type": "weekly-usage"
+      },
+      {
+        "id": "58ca37c9-5c3f-449b-8308-3b96df9376bd",
+        "type": "separator"
+      },
+      {
+        "id": "19a96d37-94bc-46ff-ac6d-3fd265602241",
+        "type": "weekly-reset-timer"
+      }
+    ]
+  ],
+  "flexMode": "full-minus-40",
+  "compactThreshold": 60,
+  "colorLevel": 2,
+  "inheritSeparatorColors": false,
+  "globalBold": false,
+  "minimalistMode": false,
+  "powerline": {
+    "enabled": false,
+    "separators": [
+      ""
+    ],
+    "separatorInvertBackground": [
+      false
+    ],
+    "startCaps": [],
+    "endCaps": [],
+    "autoAlign": false,
+    "continueThemeAcrossLines": false
+  }
+}

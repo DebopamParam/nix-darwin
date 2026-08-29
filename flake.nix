@@ -1,0 +1,98 @@
+{
+  description = "Debopam's MacBook nix-darwin configuration";
+
+  inputs = {
+    nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
+
+    nix-darwin = {
+      url = "github:LnL7/nix-darwin";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    home-manager = {
+      url = "github:nix-community/home-manager";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    # mac-app-util: Spotlight indexing for Nix .app files
+    # TEMPORARILY DISABLED — SBCL/fare-quasiquote build failure on nixpkgs-unstable
+    # Uncomment when upstream is fixed:
+    # mac-app-util = {
+    #   url = "github:hraban/mac-app-util";
+    #   inputs.nixpkgs.follows = "nixpkgs";
+    # };
+
+    # Declarative Homebrew management
+    nix-homebrew = {
+      url = "github:zhaofengli/nix-homebrew";
+      # Override the brew source pinned by nix-homebrew: it lags behind the
+      # cask JSON API, so casks using new stanzas fail to parse (e.g. vlc's
+      # `command_wrapper`). Bump with `nix flake update brew-src` when
+      # `brew bundle` reports "definition is invalid: undefined method ...".
+      inputs.brew-src.follows = "brew-src";
+    };
+    brew-src = {
+      url = "github:Homebrew/brew";
+      flake = false;
+    };
+
+  };
+
+  outputs = inputs@{
+    self,
+    nixpkgs,
+    nix-darwin,
+    home-manager,
+    nix-homebrew,
+    ...
+  }: let
+    # ═══════════════════════════════════════════
+    #  Per-machine values live in ./private.nix
+    #  (gitignored). Copy private.nix.example
+    #  to private.nix on a new machine.
+    # ═══════════════════════════════════════════
+    private = import ./private.nix;
+    inherit (private) username hostname system;
+  in {
+
+    darwinConfigurations.${hostname} = nix-darwin.lib.darwinSystem {
+      inherit system;
+      specialArgs = { inherit inputs username hostname private; };
+      modules = [
+
+        # ── System config (packages + macOS settings) ──
+        ./modules/system.nix
+        ./modules/homebrew.nix
+
+        # ── mac-app-util: TEMPORARILY DISABLED ──
+        # mac-app-util.darwinModules.default
+
+        # ── nix-homebrew: takes over your existing Homebrew ──
+        nix-homebrew.darwinModules.nix-homebrew
+        {
+          nix-homebrew = {
+            enable = true;
+            enableRosetta = true;
+            user = username;
+
+            # *** IMPORTANT: migrates your existing Homebrew install ***
+            autoMigrate = true;
+
+          };
+        }
+
+        # ── home-manager (shell, git, dotfiles) ──
+        home-manager.darwinModules.home-manager
+        {
+          home-manager = {
+            useGlobalPkgs = true;
+            useUserPackages = true;
+            backupFileExtension = "backup";
+            extraSpecialArgs = { inherit inputs private; };
+            users.${username} = import ./modules/home.nix;
+          };
+        }
+      ];
+    };
+  };
+}

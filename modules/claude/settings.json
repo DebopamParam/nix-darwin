@@ -1,0 +1,24 @@
+{
+  "model": "opus[1m]",
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "rtk hook claude"
+          }
+        ]
+      }
+    ]
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "bash ~/.config/ai-profiles/statusline.sh",
+    "padding": 0
+  },
+  "effortLevel": "medium",
+  "agentPushNotifEnabled": true,
+  "tui": "fullscreen"
+}

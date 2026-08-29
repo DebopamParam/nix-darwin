@@ -1,0 +1,64 @@
+#
+# private.nix.example — template for per-machine values
+#
+# On a fresh machine:
+#
+#   1. cp private.nix.example private.nix
+#   2. git update-index --skip-worktree private.nix
+#   3. Edit private.nix with your real values (see fields below)
+#   4. rebuild        # alias for: sudo darwin-rebuild switch --flake ~/.config/nix-darwin
+#
+# Step 2 makes git ignore your local edits to `private.nix` so your real
+# values never get pushed. The file still has to be tracked because Nix
+# flakes refuse to read untracked files — `skip-worktree` is the workaround.
+#
+
+{
+  # ── Identity ────────────────────────────────────────────────────
+  # Output of `whoami`. Used for system.primaryUser, the user account,
+  # and home-manager's home.username / home.homeDirectory.
+  username = "yourusername";
+
+  # Output of `scutil --get LocalHostName`. Used as the key for
+  # darwinConfigurations.<hostname> in flake.nix.
+  hostname = "Your-MacBook-Pro";
+
+  # CPU architecture. Apple Silicon (M1/M2/M3/M4) → "aarch64-darwin".
+  # Intel Macs → "x86_64-darwin".
+  system = "aarch64-darwin";
+
+  # ── Git identity ────────────────────────────────────────────────
+  # Plumbed into programs.git.settings.user.{name,email} via
+  # modules/home/git.nix.
+  git = {
+    name = "Your Name";
+
+    # To keep your real email out of public commits, use GitHub's
+    # noreply alias. Find yours at:
+    #   https://github.com/settings/emails  (look for "Keep my email
+    #   addresses private" — the noreply address is shown there)
+    # Format: <id>+<username>@users.noreply.github.com
+    email = "you@example.com";
+  };
+
+  # ── ngrok ───────────────────────────────────────────────────────
+  # Reserved free-tier ngrok domain for the `tunnel-port <port>` shell
+  # function (defined in modules/home/shell.nix).
+  #
+  # Reserve one at: https://dashboard.ngrok.com/domains
+  # Leave as "" to let ngrok assign a random domain on each tunnel.
+  ngrokDomain = "";
+
+  # ── Cloudflare Tunnel ───────────────────────────────────────────
+  # Used by `tunnel-port --cf <subdomain> <port>` to expose a local
+  # port at <subdomain>.<cfDomain>. The domain must be on Cloudflare
+  # nameservers. One-time setup is just:
+  #   cloudflared tunnel login
+  #
+  # cfTunnel is a PREFIX: the script creates one tunnel per subdomain
+  # named `<cfTunnel>-<subdomain>` on first use, so nothing needs to be
+  # created ahead of time. Use a value DISTINCT PER MACHINE so two
+  # machines never create tunnels with the same name.
+  cfDomain = "example.com";
+  cfTunnel = "dev-local";
+}
